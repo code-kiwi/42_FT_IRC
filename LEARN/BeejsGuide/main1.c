@@ -21,7 +21,9 @@
         return EXIT_FAILURE;
     }
 
-    
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_UNSPEC; // IPv6 or IPv4
+    hints.ai_socktype = SOCK_STREAM;
 
     return 0;
  }
