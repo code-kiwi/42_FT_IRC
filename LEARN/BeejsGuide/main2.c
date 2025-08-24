@@ -1,5 +1,10 @@
 /**
- * 
+ * TCP server minimal squeleton
+ * - prepares an address to listen from
+ * - creates a socket
+ * - waits for a connection
+ * - accepts it
+ * NB : Not complete, just here as an example
  * NB : do not forget to add error checking in real cases !
  */
 
