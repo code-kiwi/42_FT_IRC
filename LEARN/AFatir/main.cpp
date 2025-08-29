@@ -42,6 +42,28 @@ class Server {
 
             std::cout << GRE << "Server <" << this->_socketFd << "> Connected" << WHI << std::endl;
 	        std::cout << "Waiting to accept a connection..." << std::endl;
+
+            // Server's loop until signal handling
+            int returned;
+            while (!Server::signal) {
+                returned = poll(&(this->_fds[0]), this->_fds.size(), -1);
+                if (returned == -1 && !Server::signal) {
+                    throw std::runtime_error("The call to poll() failed");
+                }
+
+                // Checks all file descriptors
+                for (size_t i = 0; i < this->_fds.size(); i++) {
+                    // Checks if there is data to read
+                    if (this->_fds[i].revents & POLLIN) {
+                        if (this->_fds[i].fd == this->_socketFd) {
+                            this->acceptNewClient();
+                        } else {
+                            receiveNewData(this->_fds[i].fd);
+                        }
+                    }
+                }
+            }
+            closeFds();
         }
 
         void serverSocket(void) { // server socket creation
