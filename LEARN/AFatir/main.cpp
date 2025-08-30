@@ -1,4 +1,5 @@
 #include <string>
+#include <cstring>
 #include <iostream>
 #include <vector> // for vectors
 #include <sys/socket.h> // for socket()
@@ -23,6 +24,7 @@ class Client {
     public:
         Client(void) {}
         int getFd(void) const { return this->_fd; }
+        const std::string& getIpAddress(void) const { return this->_ipAddress; }
         void setFd(int fd) { this->_fd = fd; }
         void setIpAddress(const std::string& ipAddress) { this->_ipAddress = ipAddress; }
 
@@ -109,14 +111,68 @@ class Server {
             newPoll.events = POLLIN; // set the event POLLIN for reading data
             newPoll.revents = 0; // Sets the revents to 0 (to clear the pollfd read events)
             this->_fds.push_back(newPoll);
+
+            // Prints the IP on which the server is listening
+            struct sockaddr_in sin;
+            socklen_t len = sizeof(sin);
+
+            returned = getsockname(this->_socketFd, (struct sockaddr *) &sin, &len);
+            if (returned == -1) {
+                perror("getsockname");
+                return ;
+            }
+            std::cout << "Server bound on IP " << inet_ntoa(sin.sin_addr) << " and port " << ntohs(sin.sin_port) << std::endl;
         }
 
         void acceptNewClient(void) { // accept new client
+            Client client;
+            struct sockaddr_in clientAddress;
+            struct pollfd newPoll;
+            socklen_t len = sizeof(clientAddress);
+            int returned = 0;
 
+            // Accept new client
+            int incomingFd = accept(this->_socketFd, (sockaddr *) &(clientAddress), &len);
+            if (incomingFd == -1) {
+                std::cout << "Call to accept() failed" << std::endl;
+                return;
+            }
+
+            // Sets the socket option O_NONBLOCK for non-blocking socket
+            returned = fcntl(incomingFd, F_SETFL, O_NONBLOCK);
+            if (returned == -1) {
+                std::cout << "Call to fcntl() failed" << std::endl;
+                return;
+            }
+
+            newPoll.fd = incomingFd; // Adds the client's file descriptor
+            newPoll.events = POLLIN; // Set the event to POLLIN for reading data
+            newPoll.revents = 0; // Resets the revents value
+
+            client.setFd(incomingFd); // Sets the client file descriptor
+            client.setIpAddress(inet_ntoa(clientAddress.sin_addr)); // Converts the IP address and saves it
+            this->_clients.push_back(client); // Adds the client to the server's vector of clients
+            this->_fds.push_back(newPoll);
+
+            std::cout << GRE << "Client <" << incomingFd << " - IP : " << client.getIpAddress() << "> Connected" << WHI << std::endl;
         }
 
         void receiveNewData(int fd) { // receive new data from a registered client
+            char buffer[1024]; // buffer for received data
+            memset(buffer, 0, sizeof(buffer)); // Clears the buffer
 
+            ssize_t bytes = recv(fd, buffer, sizeof(buffer) - 1, 0); // Receive the data
+
+            if (bytes <= 0) {
+                // Client disconnection
+                std::cout << RED << "Client <" << fd << "> Disconnected" << WHI << std::endl;
+                this->clearClients(fd); // Removes the client from saved ones
+                close(fd); // closes the client's socket
+            } else {
+                // Prints the received data
+                buffer[bytes] = '\0';
+                std::cout << YEL << "Client <" << fd << "> Data: " << WHI << buffer << std::endl;
+            }
         }
 
         static void signalHandler(int signum) { // signal handler
