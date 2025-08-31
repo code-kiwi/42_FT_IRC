@@ -6,7 +6,7 @@
 #    By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/20 12:41:57 by mhotting          #+#    #+#              #
-#    Updated: 2025/08/20 12:48:57 by mhotting         ###   ########.fr        #
+#    Updated: 2025/08/31 16:18:44 by mhotting         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,15 @@ CC						=	c++
 CFLAGS					=	-Wall -Werror -Wextra -std=c++98
 DEPFLAGS				=	-MP -MMD -MF
 HFLAGS					=	-I$(HEADERS_DIR)
+
+# Enables debig flag if DEBUG=1 is passed to make
+ifeq ($(DEBUG), 1)
+	CFLAGS += -g -O0 -DDEBUG
+	BUILD_MODE = DEBUG
+else
+	CFLAGS += -O2
+	BUILD_MODE = RELEASE
+endif
 
 # HEADERS
 HEADERS_DIR				=	incs/
@@ -41,6 +50,7 @@ DEPS					=	$(addprefix $(DEPS_MAIN_DIR), $(DEPS_FILES))
 #################################################
 # RULES
 all: $(NAME)
+	@echo "Build finished in $(BUILD_MODE) mode"
 
 $(NAME): $(OBJS) 
 	$(CC) $(OBJS) -o $@
