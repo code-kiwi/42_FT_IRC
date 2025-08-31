@@ -6,16 +6,37 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 15:08:42 by mhotting          #+#    #+#             */
-/*   Updated: 2025/08/31 16:46:54 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/08/31 18:51:17 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
+#include "config.hpp"
+#include "helpers.hpp"
 
-int main(void) {
-    std::cout << "ft_irc" << std::endl;
-    #ifdef DEBUG
-        std::cout << "DEBUG MODE" << std::endl;
-    #endif
-    return 0;
+#include <cstdlib>
+#include <iostream>
+#include <stdexcept>
+#include <string>
+
+int main(int argc, char **argv) {
+    if (argc != 3) {
+        std::cerr << "Usage: ./ircserv [port] [password]" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    // Input validation
+    int port;
+    std::string password;
+    try {
+        port = stringToInt(argv[1]);
+        password = argv[2];
+        validatePort(port);
+        validatePassword(password);
+    } catch (const std::exception &e) {
+        std::cerr << "Error : " << e.what() << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    std::cout << "ft_irc - port: " << port << " - password: " << password << std::endl;
+    return EXIT_SUCCESS;
 }
