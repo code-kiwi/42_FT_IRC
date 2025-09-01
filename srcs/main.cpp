@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 15:08:42 by mhotting          #+#    #+#             */
-/*   Updated: 2025/08/31 18:51:17 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/09/01 08:33:23 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 
 int main(int argc, char **argv) {
     if (argc != 3) {
-        std::cerr << "Usage: ./ircserv [port] [password]" << std::endl;
+        std::cerr << RED << "Usage: ./ircserv [port] [password]" << WHITE << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
         validatePort(port);
         validatePassword(password);
     } catch (const std::exception &e) {
-        std::cerr << "Error : " << e.what() << std::endl;
+        std::cerr << RED << "Error : " << e.what() << WHITE << std::endl;
         return EXIT_FAILURE;
     }
 

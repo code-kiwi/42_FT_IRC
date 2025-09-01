@@ -6,7 +6,7 @@
 #    By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/20 12:41:57 by mhotting          #+#    #+#              #
-#    Updated: 2025/08/31 18:40:45 by mhotting         ###   ########.fr        #
+#    Updated: 2025/09/01 08:31:19 by mhotting         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -63,6 +63,9 @@ $(OBJS_MAIN_DIR)%.o: $(SRCS_MAIN_DIR)%.cpp
 
 -include $(DEPS)
 
+debug:
+	$(MAKE) DEBUG=1 re
+
 clean:
 	rm -rf $(OBJS_MAIN_DIR)
 	rm -rf $(DEPS_MAIN_DIR)
@@ -72,4 +75,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re debug
