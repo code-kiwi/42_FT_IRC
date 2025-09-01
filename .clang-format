@@ -4,8 +4,10 @@
     "TabWidth": 4,
     "UseTab": "Never",
     "BreakBeforeBraces": "Attach",
-    "AllowShortFunctionsOnASingleLine": false,
     "ColumnLimit": 0,
     "IndentAccessModifiers": false,
-    "AccessModifierOffset": -4
+    "AccessModifierOffset": -4,
+    "AllowShortRecordsOnASingleLine": "Empty",
+    "AllowShortBlocksOnASingleLine": "Empty",
+    "AllowShortFunctionsOnASingleLine": "Empty"
 }
