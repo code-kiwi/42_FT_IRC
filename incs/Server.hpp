@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 17:14:57 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/01 20:34:19 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/09/03 15:12:36 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ public:
 
     int getSocketFd(void) const;
     int getPort(void) const;
+    Client* getClientByFd(int fd);
 
     void init(void);
     void createSocket(void);

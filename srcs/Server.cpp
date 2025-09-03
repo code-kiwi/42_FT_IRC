@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 17:13:10 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/01 20:35:48 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/09/03 20:35:48 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,15 @@ int Server::getSocketFd(void) const {
 
 int Server::getPort(void) const {
     return this->_port;
+}
+
+Client *Server::getClientByFd(int fd) {
+    for (size_t i = 0; i < this->_clients.size(); i++) {
+        if (this->_clients[i].getFd() == fd) {
+            return &(this->_clients[i]);
+        }
+    }
+    return NULL;
 }
 
 void Server::init(void) {
@@ -178,25 +187,46 @@ void Server::acceptNewClient(void) {
     this->_clients.push_back(client);
     this->addClientToPoll(incomingFd);
 
+    std::cout << "Client: " << client.getFd() << " - " << client.getIpAddress() << std::endl;
+
 #ifdef DEBUG
     std::cout << GREEN << "Client <" << incomingFd << " - IP : " << client.getIpAddress() << "> Connected" << WHITE << std::endl;
 #endif
 }
 
 void Server::receiveData(int fd) {
-    char buffer[1024];                 // buffer for received data
-    memset(buffer, 0, sizeof(buffer)); // Clears the buffer
+    std::string buffer(BUFFER_SIZE, '\0');
 
-    ssize_t bytes = recv(fd, buffer, sizeof(buffer) - 1, 0); // Receive the data
+    // Getting a pointer to the client linked to fd
+    Client *client = this->getClientByFd(fd);
+    if (client == NULL) {
+        while (recv(fd, &buffer[0], buffer.size(), 0) > 0) {}
+#ifdef DEBUG
+        std::cerr << "Warning: received data for unknown fd " << fd << std::endl;
+#endif
+        return;
+    }
 
-    if (bytes <= 0) {
-        // Client disconnection
-        std::cout << RED << "Client <" << fd << "> Disconnected" << WHITE << std::endl;
-        this->clearClient(fd); // Removes the client from saved ones
-    } else {
-        // Prints the received data
-        buffer[bytes] = '\0';
-        std::cout << YELLOW << "Client <" << fd << "> Data: " << WHITE << buffer << std::endl;
+    // Reading from the socket
+    ssize_t bytes;
+    do {
+        bytes = recv(fd, &buffer[0], buffer.size(), 0);
+        if (bytes > 0) {
+#ifdef DEBUG
+            std::cout << YELLOW << "Client <" << client->getFd() << "> Data: " << WHITE << std::string(buffer, 0, bytes) << std::endl;
+#endif
+            client->appendToBuffer(std::string(buffer, 0, bytes));
+        }
+    } while (bytes > 0);
+
+    // Checking socket shutdown or reading error
+    if (bytes == 0) {
+        this->clearClient(client->getFd());
+    } else if (bytes == -1 && !(errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR)) {
+#ifdef DEBUG
+        std::cerr << "Error: recv() failed for fd " << client->getFd();
+#endif
+        clearClient(client->getFd());
     }
 }
 
