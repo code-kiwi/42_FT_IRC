@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 17:13:10 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/04 15:14:17 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/09/04 19:26:59 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,7 +232,7 @@ void Server::receiveData(int fd) {
 #ifdef DEBUG
             std::cout << YELLOW << "Client <" << client->getFd() << "> Data: " << WHITE << std::string(buffer, 0, bytes) << std::endl;
 #endif
-            client->appendToBuffer(std::string(buffer, 0, bytes));
+            client->appendToInputBuffer(std::string(buffer, 0, bytes));
         }
     } while (bytes > 0);
 
@@ -299,7 +299,18 @@ void Server::_addClientToPoll(int fd) {
 }
 
 void Server::_extractCommands(void) {
-    std::cout << "Extracting commands from client buffers" << std::endl;
+    for (size_t i = 0; i < this->_clients.size(); i++) {
+        Client &client = this->_clients[i];
+
+        // Getting a vector of raw commands from the client
+        std::vector<std::string> rawCommands = client.getRawCommandsFromInputBuffer();
+        if (rawCommands.empty()) {
+            continue;
+        }
+        for (size_t i = 0; i < rawCommands.size(); i++) {
+            std::cout << "Client <" << client.getFd() << "> RAWCOMMAND: " << rawCommands[i] << std::endl;
+        }
+    }
 }
 
 void Server::_processCommands(void) {

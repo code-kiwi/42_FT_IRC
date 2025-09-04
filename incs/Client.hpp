@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/01 12:00:49 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/03 20:32:42 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/09/04 19:27:19 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define CLIENT_HPP
 
 #include <string>
+#include <vector>
 
 class Client {
 public:
@@ -23,17 +24,18 @@ public:
 
     int getFd(void) const;
     const std::string &getIpAddress(void) const;
-    const std::string &getBuffer(void) const;
+    const std::string &getInputBuffer(void) const;
 
     void setFd(const int fd);
     void setIpAddress(const std::string &ipAddress);
 
-    void appendToBuffer(const std::string &receivedData);
+    void appendToInputBuffer(const std::string &receivedData);
+    std::vector<std::string> getRawCommandsFromInputBuffer(void);
 
 private:
     int _fd;
     std::string _ipAddress;
-    std::string _buffer;
+    std::string _inputBuffer;
 };
 
 #endif
