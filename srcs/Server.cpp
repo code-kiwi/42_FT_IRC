@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 17:13:10 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/04 02:06:00 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/09/04 15:14:17 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,10 +73,22 @@ void Server::init(void) {
             throw std::runtime_error("The call to poll() failed");
         }
 
-        // Checks all file descriptors
+        // Checks all file descriptors revents
         for (size_t i = 0; i < this->_fds.size(); i++) {
-            // Checks if there is data to read
-            if (this->_fds[i].revents & POLLIN) {
+            short revents = this->_fds[i].revents;
+
+            // Error detection
+            if (revents & (POLLHUP | POLLERR | POLLNVAL)) {
+                if (this->_fds[i].fd == this->_socketFd) {
+                    throw std::runtime_error("Critical error happened on main server socket");
+                } else {
+                    clearClient(this->_fds[i].fd);
+                    break;
+                }
+            }
+
+            // Data to read detection
+            if (revents & POLLIN) {
                 if (this->_fds[i].fd == this->_socketFd) {
                     this->acceptNewClient();
                 } else {
