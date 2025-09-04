@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 17:14:57 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/03 15:12:36 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/09/04 01:50:17 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,9 @@ private:
     static bool _signalReceived;
 
     Server(void);
-    void addClientToPoll(int fd);
+    void _addClientToPoll(int fd);
+    void _extractCommands(void);
+    void _processCommands(void);
 };
 
 #endif

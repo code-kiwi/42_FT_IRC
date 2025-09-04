@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 17:13:10 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/03 20:35:48 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/09/04 02:06:00 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,12 +57,17 @@ void Server::init(void) {
     this->createSocket();
 #ifdef DEBUG
     std::cout << GREEN << "Server <" << this->_socketFd << "> Connected" << WHITE << std::endl;
-    std::cout << "Waiting to accept a connection..." << std::endl;
+    std::cout << "Waiting for a connection to accept..." << std::endl;
 #endif
 
     // Server's loop until signal handling
     int returned;
     while (!Server::_signalReceived) {
+        // Handling client command
+        this->_extractCommands();
+        this->_processCommands();
+
+        // Checking for socket updates
         returned = poll(&(this->_fds[0]), this->_fds.size(), -1);
         if (returned == -1 && !Server::_signalReceived) {
             throw std::runtime_error("The call to poll() failed");
@@ -139,7 +144,7 @@ void Server::createSocket(void) {
         this->_socketFd = -1;
         throw std::runtime_error("Failed to listen() on the server socket");
     }
-    this->addClientToPoll(this->_socketFd);
+    this->_addClientToPoll(this->_socketFd);
 }
 
 void Server::acceptNewClient(void) {
@@ -185,12 +190,12 @@ void Server::acceptNewClient(void) {
     client.setFd(incomingFd);
     client.setIpAddress(std::string(ipStr));
     this->_clients.push_back(client);
-    this->addClientToPoll(incomingFd);
+    this->_addClientToPoll(incomingFd);
 
     std::cout << "Client: " << client.getFd() << " - " << client.getIpAddress() << std::endl;
 
 #ifdef DEBUG
-    std::cout << GREEN << "Client <" << incomingFd << " - IP : " << client.getIpAddress() << "> Connected" << WHITE << std::endl;
+    std::cout << GREEN << "Client <" << incomingFd << " - IP " << client.getIpAddress() << "> Connected" << WHITE << std::endl;
 #endif
 }
 
@@ -221,6 +226,9 @@ void Server::receiveData(int fd) {
 
     // Checking socket shutdown or reading error
     if (bytes == 0) {
+#ifdef DEBUG
+        std::cout << GREEN << "Client <" << client->getFd() << "> Disconnected" << WHITE << std::endl;
+#endif
         this->clearClient(client->getFd());
     } else if (bytes == -1 && !(errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR)) {
 #ifdef DEBUG
@@ -270,10 +278,18 @@ void Server::clearClient(int fd) {
     close(fd);
 }
 
-void Server::addClientToPoll(int fd) {
+void Server::_addClientToPoll(int fd) {
     struct pollfd newPoll;
     newPoll.fd = fd;
     newPoll.events = POLLIN;
     newPoll.revents = 0;
     this->_fds.push_back(newPoll);
+}
+
+void Server::_extractCommands(void) {
+    std::cout << "Extracting commands from client buffers" << std::endl;
+}
+
+void Server::_processCommands(void) {
+    std::cout << "Processing client commands" << std::endl;
 }
