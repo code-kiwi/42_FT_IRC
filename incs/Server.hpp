@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 17:14:57 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/04 19:27:13 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/09/05 19:43:02 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,13 @@
 #define SERVER_HPP
 
 #include "Client.hpp"
+#include "Command.hpp"
 
+#include <queue>
 #include <string>
 #include <vector>
+
+class Command;
 
 class Server {
 public:
@@ -44,6 +48,7 @@ private:
     std::vector<Client> _clients;
     std::vector<struct pollfd> _fds;
     static bool _signalReceived;
+    std::queue<Command *> _commandQueue;
 
     Server(void);
     void _addClientToPoll(int fd);

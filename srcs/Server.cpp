@@ -6,11 +6,12 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 17:13:10 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/04 19:26:59 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/09/05 20:11:04 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include "CommandFactory.hpp"
 #include "config.hpp"
 
 #include <arpa/inet.h>
@@ -34,7 +35,12 @@ void Server::signalHandler(int) {
 
 Server::Server(int port, const std::string password) : _socketFd(-1), _port(port), _password(password) {}
 
-Server::~Server(void) {}
+Server::~Server(void) {
+    while (!this->_commandQueue.empty()) {
+        delete this->_commandQueue.front();
+        this->_commandQueue.pop();
+    }
+}
 
 int Server::getSocketFd(void) const {
     return this->_socketFd;
@@ -310,6 +316,13 @@ void Server::_extractCommands(void) {
         for (size_t i = 0; i < rawCommands.size(); i++) {
             std::cout << "Client <" << client.getFd() << "> RAWCOMMAND: " << rawCommands[i] << std::endl;
         }
+
+        // Converting rawCommands into Command objects
+        for (size_t i = 0; i < rawCommands.size(); i++) {
+            this->_commandQueue.push(CommandFactory::createCommand(rawCommands[i], client));
+        }
+
+        std::cout << "Client <" << client.getFd() << "> QUEUE SIZE: " << this->_commandQueue.size() << std::endl;
     }
 }
 
