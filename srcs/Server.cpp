@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 17:13:10 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/05 20:11:04 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/09/06 02:16:35 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -322,7 +322,11 @@ void Server::_extractCommands(void) {
             this->_commandQueue.push(CommandFactory::createCommand(rawCommands[i], client));
         }
 
-        std::cout << "Client <" << client.getFd() << "> QUEUE SIZE: " << this->_commandQueue.size() << std::endl;
+        while (!this->_commandQueue.empty()) {
+            Command *cmd = this->_commandQueue.front();
+            this->_commandQueue.pop();
+            std::cout << *cmd << std::endl;
+        }
     }
 }
 
