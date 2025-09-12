@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 17:13:10 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/06 02:16:35 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/09/12 23:09:07 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,7 @@ void Server::createSocket(void) {
         this->_socketFd = -1;
         throw std::runtime_error("Failed to listen() on the server socket");
     }
-    this->_addClientToPoll(this->_socketFd);
+    this->_addClientToPollList(this->_socketFd);
 }
 
 void Server::acceptNewClient(void) {
@@ -208,7 +208,7 @@ void Server::acceptNewClient(void) {
     client.setFd(incomingFd);
     client.setIpAddress(std::string(ipStr));
     this->_clients.push_back(client);
-    this->_addClientToPoll(incomingFd);
+    this->_addClientToPollList(incomingFd);
 
     std::cout << "Client: " << client.getFd() << " - " << client.getIpAddress() << std::endl;
 
@@ -296,7 +296,7 @@ void Server::clearClient(int fd) {
     close(fd);
 }
 
-void Server::_addClientToPoll(int fd) {
+void Server::_addClientToPollList(int fd) {
     struct pollfd newPoll;
     newPoll.fd = fd;
     newPoll.events = POLLIN;

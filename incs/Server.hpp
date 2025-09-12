@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 17:14:57 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/05 19:43:02 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/09/12 23:09:07 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ private:
     std::queue<Command *> _commandQueue;
 
     Server(void);
-    void _addClientToPoll(int fd);
+    void _addClientToPollList(int fd);
     void _extractCommands(void);
     void _processCommands(void);
 };
