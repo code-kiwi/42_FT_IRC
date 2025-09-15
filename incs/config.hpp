@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 18:41:15 by mhotting          #+#    #+#             */
-/*   Updated: 2025/08/31 18:50:51 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/09/03 20:35:52 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,5 +22,8 @@
 // Valid ports for IRC server
 #define MIN_PORT 1024
 #define MAX_PORT 65535
+
+// Other configurations
+#define BUFFER_SIZE 1024
 
 #endif
