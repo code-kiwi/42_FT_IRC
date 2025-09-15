@@ -6,7 +6,7 @@
 #    By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/20 12:41:57 by mhotting          #+#    #+#              #
-#    Updated: 2025/08/20 12:48:57 by mhotting         ###   ########.fr        #
+#    Updated: 2025/09/01 14:58:07 by mhotting         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,12 +20,24 @@ CFLAGS					=	-Wall -Werror -Wextra -std=c++98
 DEPFLAGS				=	-MP -MMD -MF
 HFLAGS					=	-I$(HEADERS_DIR)
 
+# Enables debig flag if DEBUG=1 is passed to make
+ifeq ($(DEBUG), 1)
+	CFLAGS += -g -O0 -DDEBUG
+	BUILD_MODE = DEBUG
+else
+	CFLAGS += -O2
+	BUILD_MODE = RELEASE
+endif
+
 # HEADERS
 HEADERS_DIR				=	incs/
 
 # SOURCES GENERAL
 SRCS_MAIN_DIR			=	srcs/
-SRCS_FILES				=	main.cpp
+SRCS_FILES				=	main.cpp	\
+							helpers.cpp	\
+							Client.cpp	\
+							Server.cpp
 SRCS					=	$(addprefix $(SRCS_MAIN_DIR), $(SRCS_FILES))
 
 # OBJECTS GENERAL
@@ -41,6 +53,7 @@ DEPS					=	$(addprefix $(DEPS_MAIN_DIR), $(DEPS_FILES))
 #################################################
 # RULES
 all: $(NAME)
+	@echo "Build finished in $(BUILD_MODE) mode"
 
 $(NAME): $(OBJS) 
 	$(CC) $(OBJS) -o $@
@@ -52,6 +65,9 @@ $(OBJS_MAIN_DIR)%.o: $(SRCS_MAIN_DIR)%.cpp
 
 -include $(DEPS)
 
+debug:
+	$(MAKE) DEBUG=1 re
+
 clean:
 	rm -rf $(OBJS_MAIN_DIR)
 	rm -rf $(DEPS_MAIN_DIR)
@@ -61,4 +77,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re debug

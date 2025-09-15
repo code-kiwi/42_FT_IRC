@@ -1,0 +1,13 @@
+# Program
+ircserv
+
+# Dependency files
+.deps/
+*.d
+
+# Objet files
+.objs/
+*.o
+
+# VSCode files
+.vscode
