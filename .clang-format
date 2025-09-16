@@ -1,13 +1,11 @@
-{
-    "BasedOnStyle": "LLVM",
-    "IndentWidth": 4,
-    "TabWidth": 4,
-    "UseTab": "Never",
-    "BreakBeforeBraces": "Attach",
-    "ColumnLimit": 0,
-    "IndentAccessModifiers": false,
-    "AccessModifierOffset": -4,
-    "AllowShortRecordsOnASingleLine": "Empty",
-    "AllowShortBlocksOnASingleLine": "Empty",
-    "AllowShortFunctionsOnASingleLine": "Empty"
-}
+BasedOnStyle: LLVM
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+BreakBeforeBraces: Attach
+ColumnLimit: 0
+IndentAccessModifiers: false
+AccessModifierOffset: -4
+AllowShortRecordsOnASingleLine: Empty
+AllowShortBlocksOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: Empty

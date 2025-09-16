@@ -1,30 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   config.hpp                                         :+:      :+:    :+:   */
+/*   IRCReplies.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/31 18:41:15 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/16 00:19:53 by mhotting         ###   ########.fr       */
+/*   Created: 2025/09/15 16:24:06 by mhotting          #+#    #+#             */
+/*   Updated: 2025/09/15 16:35:07 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CONFIG_HPP
-#define CONFIG_HPP
+#ifndef IRCREPLIES_HPP
+#define IRCREPLIES_HPP
 
-// Colors for outputs
-#define RED "\e[1;31m"
-#define WHITE "\e[0;37m"
-#define GREEN "\e[1;32m"
-#define YELLOW "\e[1;33m"
+#include <string>
 
-// Valid ports for IRC server
-#define MIN_PORT 1024
-#define MAX_PORT 65535
-
-// Other configurations
-#define BUFFER_SIZE 1024
-#define SERVER_NAME "irc.42.local"
+namespace IRC {
+const int ERR_UNKNOWNCOMMAND = 421;
+const std::string MSG_UNKNOWNCOMMAND = "Unknown command";
+} // namespace IRC
 
 #endif

@@ -6,11 +6,12 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 17:13:10 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/04 19:26:59 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/09/16 18:52:07 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include "CommandFactory.hpp"
 #include "config.hpp"
 
 #include <arpa/inet.h>
@@ -32,9 +33,15 @@ void Server::signalHandler(int) {
     Server::_signalReceived = true;
 }
 
-Server::Server(int port, const std::string password) : _socketFd(-1), _port(port), _password(password) {}
+Server::Server(int port, const std::string &name, const std::string password)
+    : _socketFd(-1), _port(port), _name(name), _password(password) {}
 
-Server::~Server(void) {}
+Server::~Server(void) {
+    while (!this->_commandQueue.empty()) {
+        delete this->_commandQueue.front();
+        this->_commandQueue.pop();
+    }
+}
 
 int Server::getSocketFd(void) const {
     return this->_socketFd;
@@ -42,6 +49,10 @@ int Server::getSocketFd(void) const {
 
 int Server::getPort(void) const {
     return this->_port;
+}
+
+const std::string &Server::getName(void) const {
+    return this->_name;
 }
 
 Client *Server::getClientByFd(int fd) {
@@ -56,8 +67,8 @@ Client *Server::getClientByFd(int fd) {
 void Server::init(void) {
     this->createSocket();
 #ifdef DEBUG
-    std::cout << GREEN << "Server <" << this->_socketFd << "> Connected" << WHITE << std::endl;
-    std::cout << "Waiting for a connection to accept..." << std::endl;
+    std::cout << GREEN << "[DEBUG] Server <" << this->_socketFd << "> Connected" << WHITE << std::endl;
+    std::cout << "[DEBUG] Waiting for a connection to accept..." << std::endl;
 #endif
 
     // Server's loop until signal handling
@@ -93,6 +104,21 @@ void Server::init(void) {
                     this->acceptNewClient();
                 } else {
                     receiveData(this->_fds[i].fd);
+                }
+            }
+
+            // Data to send detection
+            if (revents & POLLOUT) {
+                Client *client = this->getClientByFd(this->_fds[i].fd);
+                if (client == NULL) {
+                    this->clearClient(this->_fds[i].fd);
+                    continue;
+                }
+                this->sendData(*client);
+
+                // No more data to send
+                if (client->getOutputBuffer().empty()) {
+                    this->_fds[i].events &= ~POLLOUT;
                 }
             }
         }
@@ -137,6 +163,7 @@ void Server::createSocket(void) {
 
     // Bind the socket to the address
     struct sockaddr_in6 serverAddress;
+    memset(&serverAddress, 0, sizeof(serverAddress));
     const struct in6_addr in6addr_any = IN6ADDR_ANY_INIT;
     serverAddress.sin6_family = AF_INET6;
     serverAddress.sin6_port = htons(this->_port);
@@ -156,7 +183,7 @@ void Server::createSocket(void) {
         this->_socketFd = -1;
         throw std::runtime_error("Failed to listen() on the server socket");
     }
-    this->_addClientToPoll(this->_socketFd);
+    this->_addClientToPollList(this->_socketFd);
 }
 
 void Server::acceptNewClient(void) {
@@ -170,12 +197,12 @@ void Server::acceptNewClient(void) {
     if (incomingFd == -1) {
         if (errno == EINTR) {
 #ifdef DEBUG
-            std::cout << "accept() interrupted, retrying later" << std::endl;
+            std::cout << "[DEBUG] accept() interrupted, retrying later" << std::endl;
 #endif
             return;
         } else if (errno == EAGAIN || errno == EWOULDBLOCK) {
 #ifdef DEBUG
-            std::cout << "accept() would block, retrying later" << std::endl;
+            std::cout << "[DEBUG] accept() would block, retrying later" << std::endl;
 #endif
             return;
         }
@@ -202,12 +229,9 @@ void Server::acceptNewClient(void) {
     client.setFd(incomingFd);
     client.setIpAddress(std::string(ipStr));
     this->_clients.push_back(client);
-    this->_addClientToPoll(incomingFd);
-
-    std::cout << "Client: " << client.getFd() << " - " << client.getIpAddress() << std::endl;
-
+    this->_addClientToPollList(incomingFd);
 #ifdef DEBUG
-    std::cout << GREEN << "Client <" << incomingFd << " - IP " << client.getIpAddress() << "> Connected" << WHITE << std::endl;
+    std::cout << GREEN << "[DEBUG] Client <" << incomingFd << " - IP " << client.getIpAddress() << "> Connected" << WHITE << std::endl;
 #endif
 }
 
@@ -219,7 +243,7 @@ void Server::receiveData(int fd) {
     if (client == NULL) {
         while (recv(fd, &buffer[0], buffer.size(), 0) > 0) {}
 #ifdef DEBUG
-        std::cerr << "Warning: received data for unknown fd " << fd << std::endl;
+        std::cerr << "[DEBUG] Warning: received data for unknown fd " << fd << std::endl;
 #endif
         return;
     }
@@ -230,7 +254,7 @@ void Server::receiveData(int fd) {
         bytes = recv(fd, &buffer[0], buffer.size(), 0);
         if (bytes > 0) {
 #ifdef DEBUG
-            std::cout << YELLOW << "Client <" << client->getFd() << "> Data: " << WHITE << std::string(buffer, 0, bytes) << std::endl;
+            std::cout << YELLOW << "[DEBUG] Client <" << client->getFd() << "> Data: " << WHITE << std::string(buffer, 0, bytes) << std::endl;
 #endif
             client->appendToInputBuffer(std::string(buffer, 0, bytes));
         }
@@ -239,14 +263,30 @@ void Server::receiveData(int fd) {
     // Checking socket shutdown or reading error
     if (bytes == 0) {
 #ifdef DEBUG
-        std::cout << GREEN << "Client <" << client->getFd() << "> Disconnected" << WHITE << std::endl;
+        std::cout << GREEN << "[DEBUG] Client <" << client->getFd() << "> Disconnected" << WHITE << std::endl;
 #endif
         this->clearClient(client->getFd());
     } else if (bytes == -1 && !(errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR)) {
 #ifdef DEBUG
-        std::cerr << "Error: recv() failed for fd " << client->getFd();
+        std::cerr << "[DEBUG] Error: recv() failed for fd " << client->getFd();
 #endif
         clearClient(client->getFd());
+    }
+}
+
+void Server::sendData(Client &client) {
+    ssize_t n;
+    while (!client.getOutputBuffer().empty()) {
+        n = send(client.getFd(), client.getOutputBuffer().c_str(), client.getOutputBuffer().size(), MSG_DONTWAIT | MSG_NOSIGNAL);
+        if (n > 0) {
+            client.consumeOutput(n);
+        } else if (n == -1) {
+            if (errno == EWOULDBLOCK || errno == EAGAIN) {
+                break; // Socket is full, wait until next POLLOUT
+            } else {
+                clearClient(client.getFd()); // Unexpected error
+            }
+        }
     }
 }
 
@@ -255,7 +295,7 @@ void Server::closeFds(void) {
     for (size_t i = 0; i < this->_clients.size(); i++) {
         close(this->_clients[i].getFd());
 #ifdef DEBUG
-        std::cout << RED << "Client <" << this->_clients[i].getFd() << "> Disconnected" << WHITE << std::endl;
+        std::cout << RED << "[DEBUG] Client <" << this->_clients[i].getFd() << "> Disconnected" << WHITE << std::endl;
 #endif
         this->_clients[i].setFd(-1);
     }
@@ -265,7 +305,7 @@ void Server::closeFds(void) {
     if (this->_socketFd != -1) {
         close(this->_socketFd);
 #ifdef DEBUG
-        std::cout << RED << "Server <" << this->_socketFd << "> Disconnected" << WHITE << std::endl;
+        std::cout << RED << "[DEBUG] Server <" << this->_socketFd << "> Disconnected" << WHITE << std::endl;
 #endif
         this->_socketFd = -1;
     }
@@ -290,7 +330,7 @@ void Server::clearClient(int fd) {
     close(fd);
 }
 
-void Server::_addClientToPoll(int fd) {
+void Server::_addClientToPollList(int fd) {
     struct pollfd newPoll;
     newPoll.fd = fd;
     newPoll.events = POLLIN;
@@ -307,12 +347,34 @@ void Server::_extractCommands(void) {
         if (rawCommands.empty()) {
             continue;
         }
+
+        // Converting rawCommands into Command objects
         for (size_t i = 0; i < rawCommands.size(); i++) {
-            std::cout << "Client <" << client.getFd() << "> RAWCOMMAND: " << rawCommands[i] << std::endl;
+            this->_commandQueue.push(CommandFactory::createCommand(rawCommands[i], client));
         }
     }
 }
 
 void Server::_processCommands(void) {
-    std::cout << "Processing client commands" << std::endl;
+    while (!this->_commandQueue.empty()) {
+        Command *cmd = this->_commandQueue.front();
+        this->_commandQueue.pop();
+        if (cmd == NULL) {
+            continue;
+        }
+#ifdef DEBUG
+        std::cout << "[DEBUG] Processing command: " << *cmd << std::endl;
+#endif
+        cmd->execute(*this);
+        delete cmd;
+    }
+}
+
+void Server::markClientForWrite(int clientFd) {
+    for (size_t i = 0; i < this->_fds.size(); i++) {
+        if (this->_fds[i].fd == clientFd) {
+            this->_fds[i].events |= POLLOUT; // add POLLOUT to the client pollfd
+            break;
+        }
+    }
 }
