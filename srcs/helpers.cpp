@@ -6,13 +6,14 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 18:34:38 by mhotting          #+#    #+#             */
-/*   Updated: 2025/08/31 18:51:07 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/09/18 20:29:48 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "helpers.hpp"
 #include "config.hpp"
 
+#include <iomanip>
 #include <sstream>
 #include <stdexcept>
 
@@ -53,4 +54,68 @@ void validatePassword(const std::string &password) {
     if (password.empty()) {
         throw std::invalid_argument("Invalid password - Password cannot be empty");
     }
+}
+
+/**
+ * @brief Prepares an IRC numeric reply as an std::string
+ * @param serverName the name of the server
+ * @param code the IRC official reply code
+ * @param target the name of the message's target
+ * @param message the message to deliver
+ * @return the reply as an std::string
+ */
+std::string formatNumericReply(const std::string &serverName, int code, const std::string &target, const std::string &message) {
+    std::ostringstream oss;
+    oss << ":" << serverName << " "
+        << std::setw(3) << std::setfill('0') << code << " "
+        << target << " :" << message << "\r\n";
+    return oss.str();
+}
+
+/**
+ * @brief Prepares an IRC numeric reply as an std::string
+ * @param serverName the name of the server
+ * @param code the IRC official reply code
+ * @param target the name of the message's target
+ * @param param an additionnal parameter to append to the reply
+ * @param message the message to deliver
+ * @return the reply as an std::string
+ */
+std::string formatNumericReply(const std::string &serverName, int code, const std::string &target, const std::string &param, const std::string &message) {
+    std::ostringstream oss;
+    oss << ":" << serverName << " "
+        << std::setw(3) << std::setfill('0') << code << " "
+        << target << " " << param << " :" << message << "\r\n";
+    return oss.str();
+}
+
+bool isLetter(char c) {
+    return std::isalpha(static_cast<unsigned char>(c)) != 0;
+}
+
+bool isDigit(char c) {
+    return std::isdigit(static_cast<unsigned char>(c)) != 0;
+}
+
+bool isSpecial(char c) {
+    return c == '[' || c == ']' || c == '\\' || c == '`' ||
+           c == '^' || c == '{' || c == '}';
+}
+
+bool isValidNickname(const std::string &nick) {
+    if (nick.empty() || nick.size() > 9)
+        return false;
+
+    // Check first character
+    if (!(isLetter(nick[0]) || isSpecial(nick[0])))
+        return false;
+
+    // Check next characters
+    for (size_t i = 1; i < nick.size(); ++i) {
+        char c = nick[i];
+        if (!(isLetter(c) || isDigit(c) || isSpecial(c) || c == '-'))
+            return false;
+    }
+
+    return true;
 }
