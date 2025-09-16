@@ -1,31 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   config.hpp                                         :+:      :+:    :+:   */
+/*   NickCommand.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/31 18:41:15 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/19 05:01:38 by mhotting         ###   ########.fr       */
+/*   Created: 2025/09/18 18:49:01 by mhotting          #+#    #+#             */
+/*   Updated: 2025/09/18 18:52:55 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CONFIG_HPP
-#define CONFIG_HPP
+#ifndef NICKCOMMAND_HPP
+#define NICKCOMMAND_HPP
 
-// Colors for outputs
-#define RED "\e[1;31m"
-#define WHITE "\e[0;37m"
-#define GREEN "\e[1;32m"
-#define YELLOW "\e[1;33m"
+#include "Client.hpp"
+#include "Command.hpp"
 
-// Valid ports for IRC server
-#define MIN_PORT 1024
-#define MAX_PORT 65535
+#include <vector>
 
-// Other configurations
-#define BUFFER_SIZE 1024
-#define SERVER_NAME "irc.42.local"
-#define SERVER_VERSION "1.0"
+class NickCommand : public Command {
+public:
+    static const std::string NAME;
+    NickCommand(Client &sender, const std::vector<std::string> &params);
+
+    const std::string &getName(void) const;
+
+    void execute(Server &server);
+
+private:
+    NickCommand(Client &client);
+};
 
 #endif

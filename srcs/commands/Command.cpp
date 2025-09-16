@@ -6,14 +6,14 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:34:43 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/16 18:33:17 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/09/19 05:35:39 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Command.hpp"
 
 Command::Command(Client &client)
-    : _sender(client), _params() {};
+    : _sender(client), _params(){};
 
 Command::Command(Client &client, const std::vector<std::string> &params)
     : _sender(client), _params(params) {}

@@ -1,31 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   config.hpp                                         :+:      :+:    :+:   */
+/*   IRCCommands.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/31 18:41:15 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/19 05:01:38 by mhotting         ###   ########.fr       */
+/*   Created: 2025/09/18 08:07:44 by mhotting          #+#    #+#             */
+/*   Updated: 2025/09/19 07:08:04 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CONFIG_HPP
-#define CONFIG_HPP
+#ifndef IRCCOMMANDS_HPP
+#define IRCCOMMANDS_HPP
 
-// Colors for outputs
-#define RED "\e[1;31m"
-#define WHITE "\e[0;37m"
-#define GREEN "\e[1;32m"
-#define YELLOW "\e[1;33m"
+#include <string>
 
-// Valid ports for IRC server
-#define MIN_PORT 1024
-#define MAX_PORT 65535
-
-// Other configurations
-#define BUFFER_SIZE 1024
-#define SERVER_NAME "irc.42.local"
-#define SERVER_VERSION "1.0"
+namespace IRC {
+const std::string CMD_PASS = "PASS";
+const std::string CMD_NICK = "NICK";
+const std::string CMD_USER = "USER";
+const std::string CMD_CAP = "CAP";
+const std::string CMD_ERROR = "ERROR";
+} // namespace IRC
 
 #endif

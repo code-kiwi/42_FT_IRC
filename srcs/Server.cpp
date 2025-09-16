@@ -6,17 +6,20 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 17:13:10 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/16 18:52:07 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/09/19 07:03:38 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include "CommandFactory.hpp"
+#include "IRCReplies.hpp"
 #include "config.hpp"
+#include "helpers.hpp"
 
 #include <arpa/inet.h>
 #include <csignal>
 #include <cstring>
+#include <ctime>
 #include <errno.h>
 #include <fcntl.h>
 #include <iostream>
@@ -33,8 +36,15 @@ void Server::signalHandler(int) {
     Server::_signalReceived = true;
 }
 
-Server::Server(int port, const std::string &name, const std::string password)
-    : _socketFd(-1), _port(port), _name(name), _password(password) {}
+Server::Server(int port, const std::string &name, const std::string &password, const std::string &version)
+    : _socketFd(-1), _port(port), _name(name), _password(password), _version(version) {
+    // Save the server creation date
+    std::time_t t = std::time(NULL);
+    std::tm *tm_ptr = std::localtime(&t);
+    char buffer[64];
+    std::strftime(buffer, sizeof(buffer), "%a %b %d %Y", tm_ptr);
+    _creationDate = buffer;
+}
 
 Server::~Server(void) {
     while (!this->_commandQueue.empty()) {
@@ -119,6 +129,13 @@ void Server::init(void) {
                 // No more data to send
                 if (client->getOutputBuffer().empty()) {
                     this->_fds[i].events &= ~POLLOUT;
+                    if (client->isMarkedForDisconnect()) {
+#ifdef DEBUG
+                        std::cout << "[DEBUG] Disconnecting client " << (client->getNickname().empty() ? "<no-nick>" : client->getNickname()) << " (fd=" << client->getFd() << ")" << std::endl;
+#endif
+                        this->clearClient(this->_fds[i].fd);
+                        continue;
+                    }
                 }
             }
         }
@@ -377,4 +394,54 @@ void Server::markClientForWrite(int clientFd) {
             break;
         }
     }
+}
+
+bool Server::isValidPassword(const std::string &password) {
+    return password == this->_password;
+}
+
+bool Server::isNicknameInUse(const std::string &nick) {
+    for (size_t i = 0; i < this->_clients.size(); i++) {
+        if (this->_clients[i].getNickname() == nick) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void Server::sendNumericReplyToClient(Client &client, int code, const std::string &message) {
+    client.appendToOutputBuffer(
+        formatNumericReply(this->_name, code, client.getReplyTarget(), message));
+    this->markClientForWrite(client.getFd());
+}
+
+void Server::sendNumericReplyToClient(Client &client, int code, const std::string &message, const std::string &param) {
+    client.appendToOutputBuffer(
+        formatNumericReply(this->_name, code, client.getReplyTarget(), param, message));
+    this->markClientForWrite(client.getFd());
+}
+
+void Server::registerClient(Client &client) {
+    if (!client.isReadyToRegister()) {
+        return;
+    }
+    client.updateState();
+
+    // Send the welcome message
+    sendNumericReplyToClient(client, IRC::RPL_WELCOME, IRC::MSG_WELCOME + " " + client.getNickname() + "!" + client.getUsername() + "@" + client.getIpAddress());
+    sendNumericReplyToClient(client, IRC::RPL_YOURHOST, IRC::MSG_YOURHOST1 + " " + this->_name + ", " + IRC::MSG_YOURHOST2 + " " + this->_version);
+    sendNumericReplyToClient(client, IRC::RPL_CREATED, IRC::MSG_CREATED + " " + this->_creationDate);
+    sendNumericReplyToClient(client, IRC::RPL_MYINFO, this->_name + " " + this->_version + " o itkol");
+
+    // Send MOTD
+    sendNumericReplyToClient(client, IRC::RPL_MOTDSTART, "- " + this->_name + " " + IRC::MSG_MOTDSTART);
+    sendNumericReplyToClient(client, IRC::RPL_MOTD, IRC::MSG_MOTD);
+    sendNumericReplyToClient(client, IRC::RPL_MOTD, "   |\\---/|");
+    sendNumericReplyToClient(client, IRC::RPL_MOTD, "   | ,_, |");
+    sendNumericReplyToClient(client, IRC::RPL_MOTD, "    \\_`_/-..----.");
+    sendNumericReplyToClient(client, IRC::RPL_MOTD, " ___/ `   ' ,''+ \\ ");
+    sendNumericReplyToClient(client, IRC::RPL_MOTD, "(__...'   __\\    |`.___.';");
+    sendNumericReplyToClient(client, IRC::RPL_MOTD, "  (_,...'(_,.`__)/'.....+");
+    sendNumericReplyToClient(client, IRC::RPL_MOTD, "Coded by : lbutel and mhotting");
+    sendNumericReplyToClient(client, IRC::RPL_ENDOFMOTD, IRC::MSG_ENDOFMOTD);
 }
