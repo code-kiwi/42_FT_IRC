@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 17:14:57 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/16 18:34:14 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/09/19 05:04:25 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ class Command;
 
 class Server {
 public:
-    Server(int port, const std::string &name, const std::string password);
+    Server(int port, const std::string &name, const std::string &password, const std::string &version);
     ~Server(void);
 
     int getSocketFd(void) const;
@@ -44,11 +44,20 @@ public:
 
     static void signalHandler(int);
 
+    bool isValidPassword(const std::string &password);
+    bool isNicknameInUse(const std::string &nick);
+
+    void registerClient(Client &client);
+    void sendNumericReplyToClient(Client &client, int code, const std::string &message);
+    void sendNumericReplyToClient(Client &client, int code, const std::string &message, const std::string &param);
+
 private:
     int _socketFd;
     int _port;
     const std::string _name;
     const std::string _password;
+    const std::string _version;
+    std::string _creationDate;
     std::vector<Client> _clients;
     std::vector<struct pollfd> _fds;
     static bool _signalReceived;
