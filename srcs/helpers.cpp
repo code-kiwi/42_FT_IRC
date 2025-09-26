@@ -16,6 +16,7 @@
 #include <iomanip>
 #include <sstream>
 #include <stdexcept>
+#include <vector>
 
 /**
  * @brief Convert a given string to an integer
@@ -126,4 +127,20 @@ bool isValidNickname(const std::string &nick) {
     }
 
     return true;
+}
+
+std::vector<std::string> splitString(const std::string &str, const std::string& delimiter)
+{
+	std::vector<std::string> ret;
+	std::string str_copy(str);
+	size_t pos = 0;
+    std::string current;
+	while ((pos = str_copy.find(delimiter)) != std::string::npos) {
+        current = str_copy.substr(0, pos);
+        ret.push_back(current);
+        str_copy.erase(0, pos + delimiter.length());
+    }
+    ret.push_back(str_copy);
+
+    return ret;
 }

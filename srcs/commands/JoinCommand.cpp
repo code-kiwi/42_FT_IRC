@@ -13,6 +13,7 @@
 #include "JoinCommand.hpp"
 #include "IRCCommands.hpp"
 #include "IRCReplies.hpp"
+#include "helpers.hpp"
 
 #include <sstream>
 
@@ -36,5 +37,21 @@ void JoinCommand::execute(Server &server) {
 		oss << " :" << IRC::MSG_NEEDMOREPARAMS;
 		server.sendNumericReplyToClient(this->_sender, IRC::ERR_NEEDMOREPARAMS, oss.str());
 		return ;
+	}
+	std::vector<std::string> channel_names = splitString(this->_params[0], ",");
+	std::vector<std::string> channel_keys;
+	if (this->_params.size() >= 2)
+		channel_keys = splitString(this->_params[1], ",");
+	for (size_t i = 0 ; i < channel_names.size() ; i++)
+	{
+		if (!server.isChannelCreated(channel_names[i]))
+		{
+			std::ostringstream oss;
+			oss << this->getName() << " ";
+			oss << channel_names[i];
+			oss << " :" << IRC::MSG_NOSUCHCHANNEL;
+			server.sendNumericReplyToClient(this->_sender, IRC::ERR_NOSUCHCHANNEL, oss.str());
+			// return ;
+		}
 	}
 }

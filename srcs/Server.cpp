@@ -408,6 +408,16 @@ bool Server::isNicknameInUse(const std::string &nick) {
     return false;
 }
 
+bool Server::isChannelCreated(const std::string channel_name)
+{
+	for (size_t i = 0 ; i < this->_channels.size() ; i++)
+	{
+		if (this->_channels[i].getName() == channel_name)
+			return (true);
+	}
+	return (false);
+}
+
 void Server::sendNumericReplyToClient(Client &client, int code, const std::string &message) {
     client.appendToOutputBuffer(
         formatNumericReply(this->_name, code, client.getReplyTarget(), message));

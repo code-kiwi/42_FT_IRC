@@ -14,6 +14,7 @@
 #define SERVER_HPP
 
 #include "Client.hpp"
+#include "Channel.hpp"
 
 #include <queue>
 #include <string>
@@ -46,6 +47,8 @@ public:
     bool isValidPassword(const std::string &password);
     bool isNicknameInUse(const std::string &nick);
 
+	bool isChannelCreated(const std::string channel_name);
+
     void registerClient(Client &client);
     void sendNumericReplyToClient(Client &client, int code, const std::string &message);
     void sendNumericReplyToClient(Client &client, int code, const std::string &message, const std::string &param);
@@ -59,6 +62,7 @@ private:
     const std::string _version;
     std::string _creationDate;
     std::vector<Client> _clients;
+    std::vector<Channel> _channels;
     std::vector<struct pollfd> _fds;
     static bool _signalReceived;
     std::queue<Command *> _commandQueue;

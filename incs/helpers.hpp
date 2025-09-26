@@ -14,6 +14,7 @@
 #define HELPERS_HPP
 
 #include <string>
+#include <vector>
 
 int stringToInt(const std::string &str);
 void validatePort(int port);
@@ -25,5 +26,6 @@ bool isLetter(char c);
 bool isDigit(char c);
 bool isSpecial(char c);
 bool isValidNickname(const std::string &nick);
+std::vector<std::string> splitString(const std::string &str, const std::string& delimiter);
 
 #endif
