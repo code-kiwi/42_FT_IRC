@@ -20,6 +20,7 @@ void validatePort(int port);
 void validatePassword(const std::string &password);
 std::string formatNumericReply(const std::string &serverName, int code, const std::string &target, const std::string &message);
 std::string formatNumericReply(const std::string &serverName, int code, const std::string &target, const std::string &param, const std::string &message);
+std::string formatMessage(const std::string &client_name, const std::string &command_name, const std::string &params);
 bool isLetter(char c);
 bool isDigit(char c);
 bool isSpecial(char c);

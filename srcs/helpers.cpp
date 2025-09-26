@@ -89,6 +89,14 @@ std::string formatNumericReply(const std::string &serverName, int code, const st
     return oss.str();
 }
 
+std::string formatMessage(const std::string &client_name, const std::string &command_name, const std::string &params)
+{
+    std::ostringstream oss;
+    oss << ":" << client_name << " "
+        << command_name << " " << params << "\r\n";
+    return oss.str();
+}
+
 bool isLetter(char c) {
     return std::isalpha(static_cast<unsigned char>(c)) != 0;
 }

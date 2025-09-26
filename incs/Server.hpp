@@ -49,6 +49,7 @@ public:
     void registerClient(Client &client);
     void sendNumericReplyToClient(Client &client, int code, const std::string &message);
     void sendNumericReplyToClient(Client &client, int code, const std::string &message, const std::string &param);
+    void sendMessageToClient(Client &client, const Command &command, const std::string &message);
 
 private:
     int _socketFd;

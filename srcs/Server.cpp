@@ -420,6 +420,12 @@ void Server::sendNumericReplyToClient(Client &client, int code, const std::strin
     this->markClientForWrite(client.getFd());
 }
 
+void Server::sendMessageToClient(Client &client, const Command &command, const std::string &params)
+{
+    client.appendToOutputBuffer(formatMessage(client.getUsername(), command.getName(), params));
+	this->markClientForWrite(client.getFd());
+}
+
 void Server::registerClient(Client &client) {
     if (!client.isReadyToRegister()) {
         return;
