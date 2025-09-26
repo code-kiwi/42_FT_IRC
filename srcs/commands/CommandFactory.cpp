@@ -18,6 +18,7 @@
 #include "NickCommand.hpp"
 #include "PassCommand.hpp"
 #include "UserCommand.hpp"
+#include "JoinCommand.hpp"
 
 #include <vector>
 
@@ -120,6 +121,7 @@ std::map<std::string, CommandFactory::CommandCreator> CommandFactory::initRegist
     m[IRC::CMD_NICK] = &CommandFactory::createNickCommand;
     m[IRC::CMD_USER] = &CommandFactory::createUserCommand;
     m[IRC::CMD_CAP] = &CommandFactory::createCapCommand;
+    m[IRC::CMD_JOIN] = &CommandFactory::createJoinCommand;
 
     return m;
 }
@@ -138,4 +140,8 @@ Command *CommandFactory::createUserCommand(Client &client, const std::vector<std
 
 Command *CommandFactory::createCapCommand(Client &client, const std::vector<std::string> &params) {
     return new CapCommand(client, params);
+}
+
+Command *CommandFactory::createJoinCommand(Client &client, const std::vector<std::string> &params) {
+    return new JoinCommand(client, params);
 }

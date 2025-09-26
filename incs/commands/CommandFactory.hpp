@@ -50,6 +50,7 @@ private:
     static Command *createNickCommand(Client &client, const std::vector<std::string> &params);
     static Command *createUserCommand(Client &client, const std::vector<std::string> &params);
     static Command *createCapCommand(Client &client, const std::vector<std::string> &params);
+    static Command *createJoinCommand(Client &client, const std::vector<std::string> &params);
 };
 
 #endif

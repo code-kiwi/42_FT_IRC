@@ -40,7 +40,8 @@ COMMANDS_FILES			=	CommandFactory.cpp	\
 							PassCommand.cpp		\
 							NickCommand.cpp		\
 							UserCommand.cpp		\
-							CapCommand.cpp
+							CapCommand.cpp		\
+							JoinCommand.cpp
 COMMANDS				=	$(addprefix $(COMMANDS_DIR), $(COMMANDS_FILES))
 
 # SOURCES GENERAL
