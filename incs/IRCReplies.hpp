@@ -54,7 +54,7 @@ const int ERR_NEEDMOREPARAMS = 461;
 const std::string MSG_NEEDMOREPARAMS = "Not enough parameters";
 
 const int ERR_ALREADYREGISTERED = 462;
-const std::string MSG_ALREADYREGISTERED = "Unauthorized command (already registered)";
+const std::string MSG_ALREADYREGISTERED = "You may not reregister";
 
 const int ERR_PASSWDMISMATCH = 464;
 const std::string MSG_PASSWDMISMATCH = "Password incorrect";
