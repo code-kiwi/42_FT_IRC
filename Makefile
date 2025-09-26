@@ -50,7 +50,8 @@ SRCS_FILES				=	$(COMMANDS)			\
 							main.cpp			\
 							helpers.cpp			\
 							Client.cpp			\
-							Server.cpp
+							Server.cpp			\
+							Channel.cpp
 SRCS					=	$(addprefix $(SRCS_MAIN_DIR), $(SRCS_FILES))
 
 # OBJECTS GENERAL
