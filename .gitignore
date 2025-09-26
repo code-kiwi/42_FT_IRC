@@ -11,3 +11,7 @@ ircserv
 
 # VSCode files
 .vscode
+
+# Clang files
+.cache
+compile_commands.json
