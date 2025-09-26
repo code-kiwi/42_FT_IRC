@@ -12,6 +12,9 @@
 
 #include "JoinCommand.hpp"
 #include "IRCCommands.hpp"
+#include "IRCReplies.hpp"
+
+#include <sstream>
 
 const std::string JoinCommand::NAME = IRC::CMD_JOIN;
 
@@ -26,5 +29,12 @@ void JoinCommand::execute(Server &server) {
 #ifdef DEBUG
     std::cout << "[DEBUG] JoinCommand executed for fd " << this->_sender.getFd() << std::endl;
 #endif
-	(void) server;
+	if (this->_params.empty())
+	{
+		std::ostringstream oss;
+		oss << this->getName();
+		oss << " :" << IRC::MSG_NEEDMOREPARAMS;
+		server.sendNumericReplyToClient(this->_sender, IRC::ERR_NEEDMOREPARAMS, oss.str());
+		return ;
+	}
 }
