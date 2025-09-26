@@ -12,10 +12,8 @@
 
 #include "ErrorCommand.hpp"
 #include "IRCCommands.hpp"
-#include "helpers.hpp"
 
 #include <iostream>
-#include <sstream>
 
 const std::string ErrorCommand::NAME = IRC::CMD_ERROR;
 

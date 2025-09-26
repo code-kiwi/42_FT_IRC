@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "Client.hpp"
-#include <sstream>
 
 Client::Client(void)
     : _fd(-1), _ipAddress(""), _inputBuffer(""), _outputBuffer(""), _state(CONNECTED), _toDisconnect(false), _passOk(false), _nickSet(false), _userSet(false) {}

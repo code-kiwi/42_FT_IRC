@@ -13,7 +13,6 @@
 #include "UserCommand.hpp"
 #include "IRCCommands.hpp"
 #include "IRCReplies.hpp"
-#include "helpers.hpp"
 
 const std::string UserCommand::NAME = IRC::CMD_USER;
 

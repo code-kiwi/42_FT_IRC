@@ -17,7 +17,6 @@
 #include "helpers.hpp"
 
 #include <arpa/inet.h>
-#include <csignal>
 #include <cstring>
 #include <ctime>
 #include <errno.h>

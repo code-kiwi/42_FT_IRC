@@ -12,8 +12,6 @@
 
 #include "CapCommand.hpp"
 #include "IRCCommands.hpp"
-#include "IRCReplies.hpp"
-#include "helpers.hpp"
 
 const std::string CapCommand::NAME = IRC::CMD_CAP;
 

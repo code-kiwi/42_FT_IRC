@@ -13,7 +13,6 @@
 #include "PassCommand.hpp"
 #include "IRCCommands.hpp"
 #include "IRCReplies.hpp"
-#include "helpers.hpp"
 
 const std::string PassCommand::NAME = IRC::CMD_PASS;
 
