@@ -14,7 +14,6 @@
 #define SERVER_HPP
 
 #include "Client.hpp"
-#include "Command.hpp"
 
 #include <queue>
 #include <string>
