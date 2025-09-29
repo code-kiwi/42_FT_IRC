@@ -21,6 +21,8 @@ public:
     Channel(const std::string &name, Client &owner);
     ~Channel(void);
 
+	static bool isValidName(const std::string channel_name);
+
     const std::string &getName(void);
     Client &getOwner(void);
 

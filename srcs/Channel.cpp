@@ -16,6 +16,20 @@ Channel::Channel(const std::string &name, Client &owner) : _name(name), _owner(o
 
 Channel::~Channel(void) {}
 
+bool Channel::isValidName(const std::string channel_name)
+{
+	// # is for global (federated) channels, & is for local channels
+	if (channel_name[0] != '&')
+		return (false);
+	if (channel_name.find(' ') != std::string::npos)
+		return (false);
+	if (channel_name.find('\a') != std::string::npos)
+		return (false);
+	if (channel_name.find(',') != std::string::npos)
+		return (false);
+	return (true);
+}
+
 const std::string &Channel::getName(void)
 {
 	return (this->_name);

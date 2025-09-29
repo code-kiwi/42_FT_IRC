@@ -62,6 +62,9 @@ const std::string MSG_ALREADYREGISTERED = "You may not reregister";
 const int ERR_PASSWDMISMATCH = 464;
 const std::string MSG_PASSWDMISMATCH = "Password incorrect";
 
+const int ERR_BADCHANMASK = 476;
+const std::string MSG_BADCHANMASK = "Bad Channel Mask";
+
 } // namespace IRC
 
 #endif

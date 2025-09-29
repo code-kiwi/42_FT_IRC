@@ -44,14 +44,14 @@ void JoinCommand::execute(Server &server) {
 		channel_keys = splitString(this->_params[1], ",");
 	for (size_t i = 0 ; i < channel_names.size() ; i++)
 	{
-		if (!server.isChannelCreated(channel_names[i]))
+		std::string channel_name = channel_names[i];
+		if (!Channel::isValidName(channel_name))
 		{
 			std::ostringstream oss;
 			oss << this->getName() << " ";
-			oss << channel_names[i];
-			oss << " :" << IRC::MSG_NOSUCHCHANNEL;
-			server.sendNumericReplyToClient(this->_sender, IRC::ERR_NOSUCHCHANNEL, oss.str());
-			// return ;
+			oss << channel_name;
+			oss << " :" << IRC::MSG_BADCHANMASK;
+			server.sendNumericReplyToClient(this->_sender, IRC::ERR_BADCHANMASK, oss.str());
 		}
 	}
 }
