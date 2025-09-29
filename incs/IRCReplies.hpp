@@ -38,9 +38,6 @@ const std::string MSG_MOTDSTART = "Message of the day -";
 const int RPL_ENDOFMOTD = 376;
 const std::string MSG_ENDOFMOTD = "End of /MOTD command.";
 
-const int ERR_NOSUCHCHANNEL = 403;
-const std::string MSG_NOSUCHCHANNEL = "No such channel";
-
 const int ERR_UNKNOWNCOMMAND = 421;
 const std::string MSG_UNKNOWNCOMMAND = "Unknown command";
 
