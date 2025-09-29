@@ -53,5 +53,28 @@ void JoinCommand::execute(Server &server) {
 			oss << " :" << IRC::MSG_BADCHANMASK;
 			server.sendNumericReplyToClient(this->_sender, IRC::ERR_BADCHANMASK, oss.str());
 		}
+		else if (server.isChannelCreated(channel_name))
+		{
+			Channel *channel = server.getChannelByName(channel_name);
+			if (channel->isMember(this->_sender))
+			{
+				std::cout << "already a member of " << channel->getName() << std::endl;
+			}
+			else
+			{
+				channel->addMember(this->_sender);
+				server.sendMessageToChannel(*channel, this->_sender, *this, channel_name);
+				std::cout << "welcome to " << channel->getName() << std::endl;
+				server.sendNamesToClient(this->_sender, *channel);
+			}
+		}
+		else
+		{
+			Channel &new_channel = server.addChannel(channel_name, this->_sender);
+			new_channel.addMember(this->_sender);
+			server.sendMessageToChannel(new_channel, this->_sender, *this, channel_name);
+			std::cout << "created " << new_channel.getName() << std::endl;
+			server.sendNamesToClient(this->_sender, new_channel);
+		}
 	}
 }

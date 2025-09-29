@@ -33,7 +33,7 @@ const std::string &Client::getUsername(void) const {
 }
 
 const std::string Client::getReplyTarget(void) const {
-    return this->_nickname.empty() ? "*" : this->_nickname;
+    return this->_username.empty() ? "*" : this->_username;
 }
 
 const std::string &Client::getIpAddress(void) const {

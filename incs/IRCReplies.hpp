@@ -29,6 +29,11 @@ const std::string MSG_CREATED = "This server was created";
 
 const int RPL_MYINFO = 4;
 
+const int RPL_NAMREPLY = 353;
+
+const int RPL_ENDOFNAMES = 366;
+const std::string MSG_ENDOFNAMES = "End of /NAMES list";
+
 const int RPL_MOTD = 372;
 const std::string MSG_MOTD = "- Welcome to our IRC server!";
 

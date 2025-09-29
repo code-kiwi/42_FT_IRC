@@ -15,6 +15,7 @@
 
 #include <iomanip>
 #include <sstream>
+#include <iostream>
 #include <stdexcept>
 #include <vector>
 
@@ -70,6 +71,7 @@ std::string formatNumericReply(const std::string &serverName, int code, const st
     oss << ":" << serverName << " "
         << std::setw(3) << std::setfill('0') << code << " "
         << target << " :" << message << "\r\n";
+	std::cout << oss.str() << std::endl;
     return oss.str();
 }
 
@@ -84,9 +86,18 @@ std::string formatNumericReply(const std::string &serverName, int code, const st
  */
 std::string formatNumericReply(const std::string &serverName, int code, const std::string &target, const std::string &param, const std::string &message) {
     std::ostringstream oss;
-    oss << ":" << serverName << " "
-        << std::setw(3) << std::setfill('0') << code << " "
-        << target << " " << param << " :" << message << "\r\n";
+	if (message.empty())
+	{
+		oss << ":" << serverName << " "
+			<< std::setw(3) << std::setfill('0') << code << " " << target << " " << param << "\r\n";
+	}
+	else
+	{
+		oss << ":" << serverName << " "
+			<< std::setw(3) << std::setfill('0') << code << " "
+			<< target << " " << param << " :" << message << "\r\n";
+	}
+	std::cout << oss.str() << std::endl;
     return oss.str();
 }
 
@@ -95,6 +106,7 @@ std::string formatMessage(const std::string &client_name, const std::string &com
     std::ostringstream oss;
     oss << ":" << client_name << " "
         << command_name << " " << params << "\r\n";
+	std::cout << oss.str() << std::endl;
     return oss.str();
 }
 

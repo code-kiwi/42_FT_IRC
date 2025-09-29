@@ -47,12 +47,16 @@ public:
     bool isValidPassword(const std::string &password);
     bool isNicknameInUse(const std::string &nick);
 
+	Channel &addChannel(const std::string &channel_name, Client &owner);
+	Channel *getChannelByName(const std::string channel_name);
 	bool isChannelCreated(const std::string channel_name);
 
     void registerClient(Client &client);
     void sendNumericReplyToClient(Client &client, int code, const std::string &message);
     void sendNumericReplyToClient(Client &client, int code, const std::string &message, const std::string &param);
-    void sendMessageToClient(Client &client, const Command &command, const std::string &message);
+    void sendMessageToClient(Client &source_client, Client &dest_client, const Command &command, const std::string &message);
+    void sendMessageToChannel(Channel &channel, Client &source, const Command &command, const std::string &params);
+	void sendNamesToClient(Client &client, Channel &channel);
 
 private:
     int _socketFd;

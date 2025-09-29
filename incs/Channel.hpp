@@ -24,11 +24,18 @@ public:
 	static bool isValidName(const std::string channel_name);
 
     const std::string &getName(void);
+	size_t getMemberCount(void);
+	Client &getMemberByIndex(size_t index);
     Client &getOwner(void);
+
+
+	void addMember(Client &client);
+	bool isMember(const Client &client);
 
 private:
     const std::string _name;
     Client &_owner;
+	std::vector<Client *> _members;
 };
 
 #endif /* CHANNEL_HPP */

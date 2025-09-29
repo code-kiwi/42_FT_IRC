@@ -40,3 +40,27 @@ Client &Channel::getOwner(void)
 	return (this->_owner);
 }
 
+size_t Channel::getMemberCount(void)
+{
+	return (this->_members.size());
+}
+
+Client &Channel::getMemberByIndex(size_t index)
+{
+	return (*(this->_members[index]));
+}
+
+bool Channel::isMember(const Client &client)
+{
+	for (size_t i = 0 ; i < this->_members.size() ; i++)
+	{
+		if (client.getUsername() == this->_members[i]->getUsername())
+			return (true);
+	}
+	return (false);
+}
+
+void Channel::addMember(Client &client)
+{
+	this->_members.push_back(&client);
+}

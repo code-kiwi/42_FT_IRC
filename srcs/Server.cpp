@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include "Channel.hpp"
 #include "CommandFactory.hpp"
 #include "IRCReplies.hpp"
 #include "config.hpp"
@@ -21,10 +22,10 @@
 #include <ctime>
 #include <errno.h>
 #include <fcntl.h>
-#include <iostream>
 #include <netinet/in.h>
 #include <poll.h>
 #include <stdexcept>
+#include <sstream>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -418,6 +419,24 @@ bool Server::isChannelCreated(const std::string channel_name)
 	return (false);
 }
 
+Channel &Server::addChannel(const std::string &channel_name, Client &owner)
+{
+	Channel channel(channel_name, owner);
+	this->_channels.push_back(channel);
+
+	return (this->_channels.back());
+}
+
+Channel *Server::getChannelByName(const std::string channel_name)
+{
+	for (size_t i = 0 ; i < this->_channels.size() ; i++)
+	{
+		if (this->_channels[i].getName() == channel_name)
+			return (&this->_channels[i]);
+	}
+	return (NULL);
+}
+
 void Server::sendNumericReplyToClient(Client &client, int code, const std::string &message) {
     client.appendToOutputBuffer(
         formatNumericReply(this->_name, code, client.getReplyTarget(), message));
@@ -430,10 +449,36 @@ void Server::sendNumericReplyToClient(Client &client, int code, const std::strin
     this->markClientForWrite(client.getFd());
 }
 
-void Server::sendMessageToClient(Client &client, const Command &command, const std::string &params)
+void Server::sendMessageToClient(Client &source_client, Client &dest_client, const Command &command,
+                                 const std::string &params) {
+  dest_client.appendToOutputBuffer(
+      formatMessage(source_client.getUsername(), command.getName(), params));
+  this->markClientForWrite(dest_client.getFd());
+}
+
+void Server::sendMessageToChannel(Channel &channel, Client &source, const Command &command, const std::string &params)
 {
-    client.appendToOutputBuffer(formatMessage(client.getUsername(), command.getName(), params));
-	this->markClientForWrite(client.getFd());
+	for (size_t i = 0 ; i < channel.getMemberCount(); i++)
+	{
+		this->sendMessageToClient(source, channel.getMemberByIndex(i), command, params);
+	}
+}
+
+void Server::sendNamesToClient(Client &client, Channel &channel)
+{
+	std::ostringstream params;
+	std::ostringstream message;
+
+	params << "= " << channel.getName();
+	for (size_t i = 0 ; i < channel.getMemberCount(); i++)
+	{
+		// TODO:Add prefix for owner and operators
+		message << channel.getMemberByIndex(i).getNickname();
+		if (i + 1 < channel.getMemberCount())
+			message << " ";
+	}
+	this->sendNumericReplyToClient(client, IRC::RPL_NAMREPLY, message.str(), params.str());
+	this->sendNumericReplyToClient(client, IRC::RPL_ENDOFNAMES, IRC::MSG_ENDOFNAMES);
 }
 
 void Server::registerClient(Client &client) {
