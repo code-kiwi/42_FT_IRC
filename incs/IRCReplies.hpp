@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:24:06 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/19 05:33:21 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/09/29 16:53:26 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ const int ERR_NEEDMOREPARAMS = 461;
 const std::string MSG_NEEDMOREPARAMS = "Not enough parameters";
 
 const int ERR_ALREADYREGISTERED = 462;
-const std::string MSG_ALREADYREGISTERED = "You may not reregister";
+const std::string MSG_ALREADYREGISTERED = "Unauthorized command (already registered)";
 
 const int ERR_PASSWDMISMATCH = 464;
 const std::string MSG_PASSWDMISMATCH = "Password incorrect";
