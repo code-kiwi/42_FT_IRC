@@ -1,35 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   JoinCommand.hpp                                    :+:      :+:    :+:   */
+/*   PartCommand.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/26 21:41:27 by lbutel            #+#    #+#             */
-/*   Updated: 2025/10/02 17:36:44 by mhotting         ###   ########.fr       */
+/*   Created: 2025/10/03 03:14:33 by mhotting          #+#    #+#             */
+/*   Updated: 2025/10/03 03:19:04 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef JOINCOMMAND_HPP
-#define JOINCOMMAND_HPP
+#ifndef PARTCOMMAND_HPP
+#define PARTCOMMAND_HPP
 
-#include "Client.hpp"
 #include "Command.hpp"
 
-#include <vector>
-
-class JoinCommand : public Command {
+class PartCommand : public Command {
 public:
     static const std::string NAME;
-    JoinCommand(Client *sender, const std::vector<std::string> &params);
+    PartCommand(Client *sender, const std::vector<std::string> &params);
 
     const std::string &getName(void) const;
 
     void execute(Server &server);
 
 private:
-    JoinCommand(Client *client);
-    void sendJoinReplies(Server &server, Channel &channel);
+    PartCommand(Client *client);
 };
 
 #endif

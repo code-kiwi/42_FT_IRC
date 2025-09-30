@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/01 12:00:41 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/19 05:35:17 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/02 00:03:55 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ const std::string &Client::getUsername(void) const {
 }
 
 const std::string Client::getReplyTarget(void) const {
-    return this->_username.empty() ? "*" : this->_username;
+    return this->_nickname.empty() ? "*" : this->_nickname;
 }
 
 const std::string &Client::getIpAddress(void) const {
@@ -96,12 +96,20 @@ std::vector<std::string> Client::getRawCommandsFromInputBuffer(void) {
     std::vector<std::string> rawCommands;
 
     while (true) {
-        size_t pos = this->_inputBuffer.find("\r\n");
+        size_t pos = this->_inputBuffer.find("\n");
         if (pos == std::string::npos) {
             break;
         }
-        rawCommands.push_back(this->_inputBuffer.substr(0, pos));
-        this->_inputBuffer.erase(0, pos + 2);
+        std::string cmd = this->_inputBuffer.substr(0, pos);
+
+        // Remove '\r' at the end of the command line
+        if (cmd[cmd.length() - 1] == '\r') {
+            cmd = cmd.substr(0, cmd.length() - 1);
+        }
+
+        // Add command to the command vector and clean buffer
+        rawCommands.push_back(cmd);
+        this->_inputBuffer.erase(0, pos + 1);
     }
     return rawCommands;
 }

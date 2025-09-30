@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 07:05:27 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/19 07:06:47 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/02 00:32:15 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,14 @@
 class CapCommand : public Command {
 public:
     static const std::string NAME;
-    CapCommand(Client &sender, const std::vector<std::string> &params);
+    CapCommand(Client *sender, const std::vector<std::string> &params);
 
     const std::string &getName(void) const;
 
     void execute(Server &server);
 
 private:
-    CapCommand(Client &client);
+    CapCommand(Client *client);
 };
 
 #endif

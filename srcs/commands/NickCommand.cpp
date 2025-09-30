@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 18:49:10 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/19 04:54:12 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/02 00:36:24 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 const std::string NickCommand::NAME = IRC::CMD_NICK;
 
-NickCommand::NickCommand(Client &sender, const std::vector<std::string> &params)
+NickCommand::NickCommand(Client *sender, const std::vector<std::string> &params)
     : Command(sender, params) {}
 
 const std::string &NickCommand::getName(void) const {
@@ -26,17 +26,17 @@ const std::string &NickCommand::getName(void) const {
 
 void NickCommand::execute(Server &server) {
 #ifdef DEBUG
-    std::cout << "[DEBUG] NickCommand executed for fd " << this->_sender.getFd() << std::endl;
+    std::cout << "[DEBUG] NickCommand executed for fd " << this->_sender->getFd() << std::endl;
 #endif
-    // Check if at least one param
-    if (this->_params.empty()) {
-        server.sendNumericReplyToClient(this->_sender, IRC::ERR_NONICKNAMEGIVEN, IRC::MSG_NONICKNAMEGIVEN);
+    // Check if PASS was sent
+    if (!this->_sender->isPassOk()) {
+        server.sendNumericReplyToClient(this->_sender, IRC::ERR_PASSWDMISMATCH, IRC::MSG_PASSWDMISMATCH);
         return;
     }
 
-    // Check if PASS was sent
-    if (!this->_sender.isPassOk()) {
-        server.sendNumericReplyToClient(this->_sender, IRC::ERR_PASSWDMISMATCH, IRC::MSG_PASSWDMISMATCH);
+    // Check if at least one param
+    if (this->_params.empty()) {
+        server.sendNumericReplyToClient(this->_sender, IRC::ERR_NONICKNAMEGIVEN, IRC::MSG_NONICKNAMEGIVEN);
         return;
     }
 
@@ -54,8 +54,8 @@ void NickCommand::execute(Server &server) {
     }
 
     // Client registration
-    this->_sender.setNickname(nick);
-    if (this->_sender.isReadyToRegister()) {
+    this->_sender->setNickname(nick);
+    if (this->_sender->isReadyToRegister()) {
         server.registerClient(this->_sender);
     }
 }

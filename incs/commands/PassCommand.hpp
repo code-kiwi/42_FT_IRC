@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 17:30:36 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/17 17:51:46 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/02 00:36:33 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,14 @@
 class PassCommand : public Command {
 public:
     static const std::string NAME;
-    PassCommand(Client &sender, const std::vector<std::string> &params);
+    PassCommand(Client *sender, const std::vector<std::string> &params);
 
     const std::string &getName(void) const;
 
     void execute(Server &server);
 
 private:
-    PassCommand(Client &client);
+    PassCommand(Client *client);
 };
 
 #endif

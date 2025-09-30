@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 18:34:38 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/18 20:29:48 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/03 01:56:25 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 #include "config.hpp"
 
 #include <iomanip>
-#include <sstream>
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 #include <vector>
 
@@ -71,7 +71,6 @@ std::string formatNumericReply(const std::string &serverName, int code, const st
     oss << ":" << serverName << " "
         << std::setw(3) << std::setfill('0') << code << " "
         << target << " :" << message << "\r\n";
-	std::cout << oss.str() << std::endl;
     return oss.str();
 }
 
@@ -86,27 +85,24 @@ std::string formatNumericReply(const std::string &serverName, int code, const st
  */
 std::string formatNumericReply(const std::string &serverName, int code, const std::string &target, const std::string &param, const std::string &message) {
     std::ostringstream oss;
-	if (message.empty())
-	{
-		oss << ":" << serverName << " "
-			<< std::setw(3) << std::setfill('0') << code << " " << target << " " << param << "\r\n";
-	}
-	else
-	{
-		oss << ":" << serverName << " "
-			<< std::setw(3) << std::setfill('0') << code << " "
-			<< target << " " << param << " :" << message << "\r\n";
-	}
-	std::cout << oss.str() << std::endl;
+    if (message.empty()) {
+        oss << ":" << serverName << " "
+            << std::setw(3) << std::setfill('0') << code << " " << target << " " << param << "\r\n";
+    } else {
+        oss << ":" << serverName << " "
+            << std::setw(3) << std::setfill('0') << code << " "
+            << target << " " << param << " :" << message << "\r\n";
+    }
     return oss.str();
 }
 
-std::string formatMessage(const std::string &client_name, const std::string &command_name, const std::string &params)
-{
+std::string formatMessage(const Client *client, const std::string &command_name, const std::string &params) {
     std::ostringstream oss;
-    oss << ":" << client_name << " "
-        << command_name << " " << params << "\r\n";
-	std::cout << oss.str() << std::endl;
+    oss << ":" << client->getNickname() << "!" << client->getUsername() << "@" << client->getIpAddress() << " " << command_name;
+    if (!params.empty()) {
+        oss << " :" << params;
+    }
+    oss << "\r\n";
     return oss.str();
 }
 
@@ -141,18 +137,22 @@ bool isValidNickname(const std::string &nick) {
     return true;
 }
 
-std::vector<std::string> splitString(const std::string &str, const std::string& delimiter)
-{
-	std::vector<std::string> ret;
-	std::string str_copy(str);
-	size_t pos = 0;
-    std::string current;
-	while ((pos = str_copy.find(delimiter)) != std::string::npos) {
-        current = str_copy.substr(0, pos);
-        ret.push_back(current);
-        str_copy.erase(0, pos + delimiter.length());
+std::vector<std::string> splitString(const std::string &str, const std::string &delimiter) {
+    if (delimiter.empty()) {
+        return std::vector<std::string>(1, str);
     }
-    ret.push_back(str_copy);
+
+    std::vector<std::string> ret;
+    std::string strCopy(str);
+    size_t pos = 0;
+    std::string current;
+
+    while ((pos = strCopy.find(delimiter)) != std::string::npos) {
+        current = strCopy.substr(0, pos);
+        ret.push_back(current);
+        strCopy.erase(0, pos + delimiter.length());
+    }
+    ret.push_back(strCopy);
 
     return ret;
 }
