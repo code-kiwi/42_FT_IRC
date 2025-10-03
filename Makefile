@@ -6,7 +6,7 @@
 #    By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/20 12:41:57 by mhotting          #+#    #+#              #
-#    Updated: 2025/10/03 12:20:18 by mhotting         ###   ########.fr        #
+#    Updated: 2025/10/06 13:34:00 by mhotting         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,7 +44,14 @@ COMMANDS_FILES			=	CommandFactory.cpp	\
 							JoinCommand.cpp		\
 							PartCommand.cpp		\
 							QuitCommand.cpp		\
-							ModeCommand.cpp
+							ModeCommand.cpp		\
+							InviteCommand.cpp	\
+							KickCommand.cpp		\
+							PingCommand.cpp		\
+							PrivMsgCommand.cpp	\
+							TopicCommand.cpp	\
+							WhoCommand.cpp		\
+							NamesCommand.cpp
 COMMANDS				=	$(addprefix $(COMMANDS_DIR), $(COMMANDS_FILES))
 
 # SOURCES GENERAL

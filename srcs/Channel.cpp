@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 11:14:31 by lbutel            #+#    #+#             */
-/*   Updated: 2025/10/03 02:11:38 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/06 12:57:42 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <stdexcept>
 
 Channel::Channel(const std::string &name)
-    : _name(name), _key(""), _topic(""), _inviteOnly(false), _topicOnly(false), _keyMode(false), _limitMode(false), _limit(0) {}
+    : _name(name), _key(""), _topic(""), _inviteOnly(false), _topicRestricted(false), _keyMode(false), _limitMode(false), _limit(0) {}
 
 Channel::~Channel(void) {}
 
@@ -79,8 +79,8 @@ bool Channel::isInviteOnly(void) const {
     return this->_inviteOnly;
 }
 
-bool Channel::isTopicOnly(void) const {
-    return this->_topicOnly;
+bool Channel::isTopicRestricted(void) const {
+    return this->_topicRestricted;
 }
 
 bool Channel::hasKeyMode(void) const {
@@ -99,8 +99,8 @@ void Channel::setInviteOnlyMode(bool val) {
     this->_inviteOnly = val;
 }
 
-void Channel::setTopicOnlyMode(bool val) {
-    this->_topicOnly = val;
+void Channel::setTopicRestrictedMode(bool val) {
+    this->_topicRestricted = val;
 }
 
 void Channel::setKeyMode(bool val) {
@@ -148,4 +148,31 @@ void Channel::removeOp(Client *client) {
 
 size_t Channel::getOpsCount(void) const {
     return this->_ops.size();
+}
+
+bool Channel::isInvited(Client *client) const {
+    return (this->_invitedClients.find(client) != this->_invitedClients.end());
+}
+
+void Channel::addInvited(Client *client) {
+    this->_invitedClients.insert(client);
+}
+
+void Channel::removeInvited(Client *client) {
+    this->_invitedClients.erase(client);
+}
+
+void Channel::kickMember(Client *client) {
+    if (client == NULL) {
+        return;
+    }
+    this->removeMember(client);
+    this->removeOp(client);
+    this->removeInvited(client);
+    if (this->getOpsCount() == 0 && this->getMemberCount() > 0) {
+        Client *newOp = this->getFirstMember();
+        if (newOp != NULL) {
+            this->addOp(newOp);
+        }
+    }
 }

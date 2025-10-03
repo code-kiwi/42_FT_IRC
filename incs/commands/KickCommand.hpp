@@ -1,37 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   JoinCommand.hpp                                    :+:      :+:    :+:   */
+/*   KickCommand.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/26 21:41:27 by lbutel            #+#    #+#             */
-/*   Updated: 2025/10/05 15:10:28 by mhotting         ###   ########.fr       */
+/*   Created: 2025/10/04 01:24:15 by mhotting          #+#    #+#             */
+/*   Updated: 2025/10/06 12:31:10 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef JOINCOMMAND_HPP
-#define JOINCOMMAND_HPP
+#ifndef KICKCOMMAND_HPP
+#define KICKCOMMAND_HPP
 
-#include "Client.hpp"
 #include "Command.hpp"
 
-#include <vector>
-
-class JoinCommand : public Command {
+class KickCommand : public Command {
 public:
     static const std::string NAME;
-    JoinCommand(Client *sender, const std::vector<std::string> &params);
+    KickCommand(Client *sender, const std::vector<std::string> &params);
 
     const std::string &getName(void) const;
 
     void execute(Server &server);
 
 private:
-    JoinCommand(Client *client);
-    void sendJoinReplies(Server &server, Channel &channel);
-    void joinExistingChannel(Server &server, const std::string &channelName, const std::string &channelKey);
-    void joinNewChannel(Server &server, const std::string &channelName, const std::string &channelKey);
+    KickCommand(Client *client);
+    void kickMemberFromChannel(Server &server, Channel *channel, const std::string &targetName, const std::string &comment);
+    Channel *getAndCheckChannel(Server &server, const std::string &channelName);
 };
 
 #endif

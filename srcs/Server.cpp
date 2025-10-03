@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 17:13:10 by mhotting          #+#    #+#             */
-/*   Updated: 2025/10/03 11:55:07 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/08 00:02:51 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,28 @@ Client *Server::getClientByFd(int fd) {
         }
     }
     return NULL;
+}
+
+Client *Server::getClientByNickname(const std::string &nick) {
+    for (size_t i = 0; i < this->_clients.size(); i++) {
+        if (this->_clients[i]->getNickname() == nick) {
+            return this->_clients[i];
+        }
+    }
+    return NULL;
+}
+
+const std::vector<Client *> &Server::getAllClients(void) const {
+    return this->_clients;
+}
+
+std::vector<std::string> Server::getAllChannelNames(void) const {
+    std::vector<std::string> channelNames;
+
+    for (size_t i = 0; i < this->_channels.size(); i++) {
+        channelNames.push_back(this->_channels[i].getName());
+    }
+    return channelNames;
 }
 
 void Server::init(void) {
@@ -529,9 +551,11 @@ void Server::partClientFromChannel(Client *client, Channel &channel, const std::
 void Server::quitClientFromAllChannels(Client *client, const std::string &reason) {
     std::set<Client *> targets;
 
-    for (size_t i = 0; i < this->_channels.size(); i++) {
+    size_t i = 0;
+    while (i < this->_channels.size()) {
         Channel &channel = this->_channels[i];
         if (!channel.isMember(client)) {
+            i++;
             continue;
         }
         targets.insert(channel.getMembers().begin(), channel.getMembers().end());
@@ -544,11 +568,14 @@ void Server::quitClientFromAllChannels(Client *client, const std::string &reason
                 channel.addOp(channel.getFirstMember());
             }
         }
+        channel.removeInvited(client);
 
         // Remove channel if empty
         if (channel.getMemberCount() == 0) {
             this->removeChannel(channel.getName());
+            continue;
         }
+        i++;
     }
     targets.erase(client);
 
@@ -629,4 +656,19 @@ void Server::registerClient(Client *client) {
     sendNumericReplyToClient(client, IRC::RPL_MOTD, "  (_,...'(_,.`__)/'.....+");
     sendNumericReplyToClient(client, IRC::RPL_MOTD, "Coded by : lbutel and mhotting");
     sendNumericReplyToClient(client, IRC::RPL_ENDOFMOTD, IRC::MSG_ENDOFMOTD);
+}
+
+std::set<Client *> Server::getChannelPeers(Client *client) {
+    std::set<Client *> peers;
+
+    for (size_t i = 0; i < this->_channels.size(); i++) {
+        Channel &channel = this->_channels[i];
+        if (!channel.isMember(client)) {
+            continue;
+        }
+        std::set<Client *> members = channel.getMembers();
+        peers.insert(members.begin(), members.end());
+    }
+    peers.erase(client);
+    return peers;
 }

@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 18:49:10 by mhotting          #+#    #+#             */
-/*   Updated: 2025/10/02 00:36:24 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/06 23:34:33 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,15 @@ void NickCommand::execute(Server &server) {
 #ifdef DEBUG
     std::cout << "[DEBUG] NickCommand executed for fd " << this->_sender->getFd() << std::endl;
 #endif
-    // Check if PASS was sent
-    if (!this->_sender->isPassOk()) {
-        server.sendNumericReplyToClient(this->_sender, IRC::ERR_PASSWDMISMATCH, IRC::MSG_PASSWDMISMATCH);
-        return;
-    }
-
     // Check if at least one param
     if (this->_params.empty()) {
         server.sendNumericReplyToClient(this->_sender, IRC::ERR_NONICKNAMEGIVEN, IRC::MSG_NONICKNAMEGIVEN);
+        return;
+    }
+
+    // Check if PASS was sent
+    if (!this->_sender->isPassOk()) {
+        server.sendNumericReplyToClient(this->_sender, IRC::ERR_PASSWDMISMATCH, IRC::MSG_PASSWDMISMATCH);
         return;
     }
 
@@ -54,8 +54,19 @@ void NickCommand::execute(Server &server) {
     }
 
     // Client registration
-    this->_sender->setNickname(nick);
-    if (this->_sender->isReadyToRegister()) {
-        server.registerClient(this->_sender);
+    if (!this->_sender->isRegistered()) {
+        this->_sender->setNickname(nick);
+        if (this->_sender->isReadyToRegister()) {
+            server.registerClient(this->_sender);
+        }
+        return;
     }
+
+    // Client nick change and broadcast message
+    std::set<Client *> peers = server.getChannelPeers(this->_sender);
+    for (std::set<Client *>::iterator it = peers.begin(); it != peers.end(); it++) {
+        server.sendMessageToClient(this->_sender, *it, this->getName(), nick);
+    }
+    server.sendMessageToClient(this->_sender, this->_sender, this->getName(), nick);
+    this->_sender->setNickname(nick);
 }

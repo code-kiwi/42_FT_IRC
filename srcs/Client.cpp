@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/01 12:00:41 by mhotting          #+#    #+#             */
-/*   Updated: 2025/10/02 00:03:55 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/07 22:51:52 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,10 @@ const std::string &Client::getNickname(void) const {
 
 const std::string &Client::getUsername(void) const {
     return this->_username;
+}
+
+const std::string &Client::getRealname(void) const {
+    return this->_realname;
 }
 
 const std::string Client::getReplyTarget(void) const {

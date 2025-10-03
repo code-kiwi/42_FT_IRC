@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 17:14:57 by mhotting          #+#    #+#             */
-/*   Updated: 2025/10/03 11:42:17 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/07 23:11:36 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include "IRCCommands.hpp"
 
 #include <queue>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -32,6 +33,9 @@ public:
     int getPort(void) const;
     const std::string &getName(void) const;
     Client *getClientByFd(int fd);
+    Client *getClientByNickname(const std::string &nick);
+    const std::vector<Client *> &getAllClients(void) const;
+    std::vector<std::string> getAllChannelNames(void) const;
 
     void init(void);
     void createSocket(void);
@@ -64,6 +68,7 @@ public:
     void sendMessageToClient(const Client *source_client, Client *dest_client, const std::string &commandName, const std::string &params);
     void sendMessageToChannelUsers(Channel &channel, const Client *source, const std::string &commandName, const std::string &params);
     void sendNamesToClient(Client *client, Channel &channel);
+    std::set<Client *> getChannelPeers(Client *client);
 
 private:
     int _socketFd;

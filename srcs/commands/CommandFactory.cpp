@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 17:23:15 by mhotting          #+#    #+#             */
-/*   Updated: 2025/10/03 12:24:57 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/06 13:33:44 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,20 @@
 #include "ErrorCommand.hpp"
 #include "IRCCommands.hpp"
 #include "IRCReplies.hpp"
+#include "InviteCommand.hpp"
 #include "JoinCommand.hpp"
+#include "KickCommand.hpp"
 #include "ModeCommand.hpp"
+#include "NamesCommand.hpp"
 #include "NickCommand.hpp"
 #include "PartCommand.hpp"
 #include "PassCommand.hpp"
+#include "PingCommand.hpp"
+#include "PrivMsgCommand.hpp"
 #include "QuitCommand.hpp"
+#include "TopicCommand.hpp"
 #include "UserCommand.hpp"
+#include "WhoCommand.hpp"
 
 #include <vector>
 
@@ -128,6 +135,13 @@ std::map<std::string, CommandFactory::CommandCreator> CommandFactory::initRegist
     m[IRC::CMD_PART] = &CommandFactory::createPartCommand;
     m[IRC::CMD_QUIT] = &CommandFactory::createQuitCommand;
     m[IRC::CMD_MODE] = &CommandFactory::createModeCommand;
+    m[IRC::CMD_INVITE] = &CommandFactory::createInviteCommand;
+    m[IRC::CMD_KICK] = &CommandFactory::createKickCommand;
+    m[IRC::CMD_PING] = &CommandFactory::createPingCommand;
+    m[IRC::CMD_PRIVMSG] = &CommandFactory::createPrivMsgCommand;
+    m[IRC::CMD_TOPIC] = &CommandFactory::createTopicCommand;
+    m[IRC::CMD_WHO] = &CommandFactory::createWhoCommand;
+    m[IRC::CMD_NAMES] = &CommandFactory::createNamesCommand;
 
     return m;
 }
@@ -162,4 +176,32 @@ Command *CommandFactory::createQuitCommand(Client *client, const std::vector<std
 
 Command *CommandFactory::createModeCommand(Client *client, const std::vector<std::string> &params) {
     return new ModeCommand(client, params);
+}
+
+Command *CommandFactory::createInviteCommand(Client *client, const std::vector<std::string> &params) {
+    return new InviteCommand(client, params);
+}
+
+Command *CommandFactory::createKickCommand(Client *client, const std::vector<std::string> &params) {
+    return new KickCommand(client, params);
+}
+
+Command *CommandFactory::createPingCommand(Client *client, const std::vector<std::string> &params) {
+    return new PingCommand(client, params);
+}
+
+Command *CommandFactory::createPrivMsgCommand(Client *client, const std::vector<std::string> &params) {
+    return new PrivMsgCommand(client, params);
+}
+
+Command *CommandFactory::createTopicCommand(Client *client, const std::vector<std::string> &params) {
+    return new TopicCommand(client, params);
+}
+
+Command *CommandFactory::createWhoCommand(Client *client, const std::vector<std::string> &params) {
+    return new WhoCommand(client, params);
+}
+
+Command *CommandFactory::createNamesCommand(Client *client, const std::vector<std::string> &params) {
+    return new NamesCommand(client, params);
 }

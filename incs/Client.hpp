@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/01 12:00:49 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/30 17:29:00 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/07 22:51:25 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ public:
     int getFd(void) const;
     const std::string &getNickname(void) const;
     const std::string &getUsername(void) const;
+    const std::string &getRealname(void) const;
     const std::string getReplyTarget(void) const;
     const std::string &getIpAddress(void) const;
     const std::string &getInputBuffer(void) const;

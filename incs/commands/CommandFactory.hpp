@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 20:26:30 by mhotting          #+#    #+#             */
-/*   Updated: 2025/10/03 12:24:15 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/06 13:32:32 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,13 @@ private:
     static Command *createPartCommand(Client *client, const std::vector<std::string> &params);
     static Command *createQuitCommand(Client *client, const std::vector<std::string> &params);
     static Command *createModeCommand(Client *client, const std::vector<std::string> &params);
+    static Command *createInviteCommand(Client *client, const std::vector<std::string> &params);
+    static Command *createKickCommand(Client *client, const std::vector<std::string> &params);
+    static Command *createPingCommand(Client *client, const std::vector<std::string> &params);
+    static Command *createPrivMsgCommand(Client *client, const std::vector<std::string> &params);
+    static Command *createTopicCommand(Client *client, const std::vector<std::string> &params);
+    static Command *createWhoCommand(Client *client, const std::vector<std::string> &params);
+    static Command *createNamesCommand(Client *client, const std::vector<std::string> &params);
 };
 
 #endif
