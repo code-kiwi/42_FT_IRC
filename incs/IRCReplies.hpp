@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:24:06 by mhotting          #+#    #+#             */
-/*   Updated: 2025/10/03 03:28:48 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/04 11:12:34 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,12 +78,18 @@ const std::string MSG_ALREADYREGISTERED = "Unauthorized command (already registe
 const int ERR_PASSWDMISMATCH = 464;
 const std::string MSG_PASSWDMISMATCH = "Password incorrect";
 
+const int ERR_UNKNOWNMODE = 472;
+const std::string MSG_UNKNOWNMODE = "is unknown mode char to me for ";
+
 const int ERR_BADCHANKEY = 475;
 const std::string MSG_BADCHANKEY1 = "Bad Channel Key";
 const std::string MSG_BADCHANKEY2 = "Cannot join channel (+k)";
 
 const int ERR_BADCHANMASK = 476;
 const std::string MSG_BADCHANMASK = "Bad Channel Mask";
+
+const int ERR_CHANOPRIVSNEEDED = 482;
+const std::string MSG_CHANOPRIVSNEEDED = "You're not channel operator";
 
 } // namespace IRC
 

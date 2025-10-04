@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 12:20:49 by mhotting          #+#    #+#             */
-/*   Updated: 2025/10/03 12:22:22 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/04 10:51:15 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ public:
     void execute(Server &server);
 
 private:
+    static bool isValidModeFlag(const std::string &mode);
     ModeCommand(Client *client);
 };
 
