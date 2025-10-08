@@ -32,6 +32,10 @@ const std::string &Client::getUsername(void) const {
     return this->_username;
 }
 
+const std::string &Client::getRealname(void) const {
+    return this->_realname;
+}
+
 const std::string Client::getReplyTarget(void) const {
     return this->_nickname.empty() ? "*" : this->_nickname;
 }

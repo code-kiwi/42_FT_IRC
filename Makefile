@@ -6,7 +6,7 @@
 #    By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/20 12:41:57 by mhotting          #+#    #+#              #
-#    Updated: 2025/09/19 07:12:02 by mhotting         ###   ########.fr        #
+#    Updated: 2025/10/06 13:34:00 by mhotting         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,7 +40,18 @@ COMMANDS_FILES			=	CommandFactory.cpp	\
 							PassCommand.cpp		\
 							NickCommand.cpp		\
 							UserCommand.cpp		\
-							CapCommand.cpp
+							CapCommand.cpp		\
+							JoinCommand.cpp		\
+							PartCommand.cpp		\
+							QuitCommand.cpp		\
+							ModeCommand.cpp		\
+							InviteCommand.cpp	\
+							KickCommand.cpp		\
+							PingCommand.cpp		\
+							PrivMsgCommand.cpp	\
+							TopicCommand.cpp	\
+							WhoCommand.cpp		\
+							NamesCommand.cpp
 COMMANDS				=	$(addprefix $(COMMANDS_DIR), $(COMMANDS_FILES))
 
 # SOURCES GENERAL
@@ -49,7 +60,8 @@ SRCS_FILES				=	$(COMMANDS)			\
 							main.cpp			\
 							helpers.cpp			\
 							Client.cpp			\
-							Server.cpp
+							Server.cpp			\
+							Channel.cpp
 SRCS					=	$(addprefix $(SRCS_MAIN_DIR), $(SRCS_FILES))
 
 # OBJECTS GENERAL

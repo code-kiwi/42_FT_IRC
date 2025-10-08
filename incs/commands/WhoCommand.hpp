@@ -1,31 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   config.hpp                                         :+:      :+:    :+:   */
+/*   WhoCommand.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/31 18:41:15 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/30 17:28:57 by mhotting         ###   ########.fr       */
+/*   Created: 2025/10/04 01:24:46 by mhotting          #+#    #+#             */
+/*   Updated: 2025/10/04 01:30:54 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CONFIG_HPP
-#define CONFIG_HPP
+#ifndef WHOCOMMAND_HPP
+#define WHOCOMMAND_HPP
 
-// Colors for outputs
-#define RED "\e[1;31m"
-#define WHITE "\e[0;37m"
-#define GREEN "\e[1;32m"
-#define YELLOW "\e[1;33m"
+#include "Command.hpp"
 
-// Valid ports for IRC server
-#define MIN_PORT 1024
-#define MAX_PORT 65535
+class WhoCommand : public Command {
+public:
+    static const std::string NAME;
+    WhoCommand(Client *sender, const std::vector<std::string> &params);
 
-// Other configurations
-#define BUFFER_SIZE 1024
-#define SERVER_NAME "irc.42.local"
-#define SERVER_VERSION "1.0"
+    const std::string &getName(void) const;
+
+    void execute(Server &server);
+
+private:
+    WhoCommand(Client *client);
+};
 
 #endif

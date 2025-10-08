@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 20:26:30 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/19 07:12:18 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/06 13:32:32 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ class ErrorCommand;
 class CommandFactory {
 public:
     // Interface
-    static Command *createCommand(const std::string &rawCommand, Client &client);
+    static Command *createCommand(const std::string &rawCommand, Client *client);
 
 private:
     CommandFactory(void);
@@ -41,15 +41,26 @@ private:
     static ParsedCommand parseRawCommand(const std::string &rawCommand);
 
     // Registry utils
-    typedef Command *(*CommandCreator)(Client &client, const std::vector<std::string> &params);
+    typedef Command *(*CommandCreator)(Client *client, const std::vector<std::string> &params);
     typedef std::map<std::string, CommandCreator> CreatorMap;
     static std::map<std::string, CommandCreator> initRegistry(void);
 
     // Create commands
-    static Command *createPassCommand(Client &client, const std::vector<std::string> &params);
-    static Command *createNickCommand(Client &client, const std::vector<std::string> &params);
-    static Command *createUserCommand(Client &client, const std::vector<std::string> &params);
-    static Command *createCapCommand(Client &client, const std::vector<std::string> &params);
+    static Command *createPassCommand(Client *client, const std::vector<std::string> &params);
+    static Command *createNickCommand(Client *client, const std::vector<std::string> &params);
+    static Command *createUserCommand(Client *client, const std::vector<std::string> &params);
+    static Command *createCapCommand(Client *client, const std::vector<std::string> &params);
+    static Command *createJoinCommand(Client *client, const std::vector<std::string> &params);
+    static Command *createPartCommand(Client *client, const std::vector<std::string> &params);
+    static Command *createQuitCommand(Client *client, const std::vector<std::string> &params);
+    static Command *createModeCommand(Client *client, const std::vector<std::string> &params);
+    static Command *createInviteCommand(Client *client, const std::vector<std::string> &params);
+    static Command *createKickCommand(Client *client, const std::vector<std::string> &params);
+    static Command *createPingCommand(Client *client, const std::vector<std::string> &params);
+    static Command *createPrivMsgCommand(Client *client, const std::vector<std::string> &params);
+    static Command *createTopicCommand(Client *client, const std::vector<std::string> &params);
+    static Command *createWhoCommand(Client *client, const std::vector<std::string> &params);
+    static Command *createNamesCommand(Client *client, const std::vector<std::string> &params);
 };
 
 #endif
