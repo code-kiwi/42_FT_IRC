@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 17:23:15 by mhotting          #+#    #+#             */
-/*   Updated: 2025/10/06 13:33:44 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/08 15:33:12 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include "InviteCommand.hpp"
 #include "JoinCommand.hpp"
 #include "KickCommand.hpp"
+#include "ListCommand.hpp"
 #include "ModeCommand.hpp"
 #include "NamesCommand.hpp"
 #include "NickCommand.hpp"
@@ -142,6 +143,7 @@ std::map<std::string, CommandFactory::CommandCreator> CommandFactory::initRegist
     m[IRC::CMD_TOPIC] = &CommandFactory::createTopicCommand;
     m[IRC::CMD_WHO] = &CommandFactory::createWhoCommand;
     m[IRC::CMD_NAMES] = &CommandFactory::createNamesCommand;
+    m[IRC::CMD_LIST] = &CommandFactory::createListCommand;
 
     return m;
 }
@@ -204,4 +206,8 @@ Command *CommandFactory::createWhoCommand(Client *client, const std::vector<std:
 
 Command *CommandFactory::createNamesCommand(Client *client, const std::vector<std::string> &params) {
     return new NamesCommand(client, params);
+}
+
+Command *CommandFactory::createListCommand(Client *client, const std::vector<std::string> &params) {
+    return new ListCommand(client, params);
 }

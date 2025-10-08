@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:24:06 by mhotting          #+#    #+#             */
-/*   Updated: 2025/09/29 16:53:26 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/08 16:08:16 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,11 @@ const int RPL_MYINFO = 4;
 
 const int RPL_ENDOFWHO = 315;
 const std::string MSG_ENDOFWHO = "End of WHO list";
+
+const int RPL_LIST = 322;
+
+const int RPL_LISTEND = 323;
+const std::string MSG_LISTEND = ":End of LIST";
 
 const int RPL_NOTOPIC = 331;
 const std::string MSG_NOTOPIC = "No topic is set";
@@ -72,6 +77,8 @@ const std::string MSG_NONICKNAMEGIVEN = "No nickname given";
 
 const int ERR_ERRONEUSNICKNAME = 432;
 const std::string MSG_ERRONEUSNICKNAME = "Erroneous nickname";
+const std::string MSG_ERRONEUSNICKNAME2 = "Erroneous username";
+const std::string MSG_ERRONEUSNICKNAME3 = "Erroneous realname";
 
 const int ERR_NICKNAMEINUSE = 433;
 const std::string MSG_NICKNAMEINUSE = "Nickname is already in use";

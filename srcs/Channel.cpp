@@ -6,11 +6,13 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 11:14:31 by lbutel            #+#    #+#             */
-/*   Updated: 2025/10/06 12:57:42 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/10 00:54:29 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Channel.hpp"
+#include "IRCCommands.hpp"
+#include "IRCReplies.hpp"
 
 #include <stdexcept>
 
@@ -162,17 +164,25 @@ void Channel::removeInvited(Client *client) {
     this->_invitedClients.erase(client);
 }
 
-void Channel::kickMember(Client *client) {
+void Channel::kickMember(Server &server, Client *client, Client *sourceClient) {
     if (client == NULL) {
         return;
     }
     this->removeMember(client);
     this->removeOp(client);
     this->removeInvited(client);
-    if (this->getOpsCount() == 0 && this->getMemberCount() > 0) {
-        Client *newOp = this->getFirstMember();
-        if (newOp != NULL) {
-            this->addOp(newOp);
-        }
+    this->promoteMemberIfNecessary(server, sourceClient);
+}
+
+void Channel::promoteMemberIfNecessary(Server &server, Client *sourceClient) {
+    if (this->getOpsCount() > 0 || this->getMemberCount() == 0) {
+        return;
     }
+    Client *newOp = this->getFirstMember();
+    if (newOp == NULL) {
+        return;
+    }
+    this->addOp(newOp);
+    std::string msg = IRC::CMD_MODE + " " + this->getName() + " +o " + newOp->getNickname();
+    server.sendMessageToChannelUsers(*this, sourceClient, msg, "");
 }

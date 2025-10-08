@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 12:20:45 by mhotting          #+#    #+#             */
-/*   Updated: 2025/10/06 00:31:18 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/08 18:16:34 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,7 +191,7 @@ void ModeCommand::handleModeO(Server &server, Channel *channel, const std::strin
         channel->removeOp(target);
     }
 
-    // Send confirme message
+    // Send confirm message
     std::string msg = this->getName() + " " + channel->getName() + " " + modeFlag + " " + nick;
     server.sendMessageToClient(this->_sender, this->_sender, msg, "");
     server.sendMessageToChannelUsers(*channel, this->_sender, msg, "");

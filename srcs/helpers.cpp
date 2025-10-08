@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 18:34:38 by mhotting          #+#    #+#             */
-/*   Updated: 2025/10/03 01:56:25 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/08 18:33:52 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,17 @@ void validatePassword(const std::string &password) {
     if (password.empty()) {
         throw std::invalid_argument("Invalid password - Password cannot be empty");
     }
+    if (password.length() < 6 || password.length() > 256) {
+        throw std::invalid_argument("Invalid password - Password length (6 <= len <= 256)");
+    }
+    for (size_t i = 0; i < password.length(); ++i) {
+        char c = password[i];
+        if (!std::isalnum(static_cast<unsigned char>(c)) && c != '.' && c != '!' && c != '?' && c != ',') {
+            std::ostringstream oss;
+            oss << "Invalid password - Unsupported character: '" << c << "'";
+            throw std::invalid_argument(oss.str());
+        }
+    }
 }
 
 /**
@@ -99,6 +110,16 @@ std::string formatNumericReply(const std::string &serverName, int code, const st
 std::string formatMessage(const Client *client, const std::string &command_name, const std::string &params) {
     std::ostringstream oss;
     oss << ":" << client->getNickname() << "!" << client->getUsername() << "@" << client->getIpAddress() << " " << command_name;
+    if (!params.empty()) {
+        oss << " :" << params;
+    }
+    oss << "\r\n";
+    return oss.str();
+}
+
+std::string formatMessage(const std::string &formattedName, const std::string &command_name, const std::string &params) {
+    std::ostringstream oss;
+    oss << formattedName << " " << command_name;
     if (!params.empty()) {
         oss << " :" << params;
     }

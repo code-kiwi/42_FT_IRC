@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/19 06:22:05 by mhotting          #+#    #+#             */
-/*   Updated: 2025/10/02 00:37:37 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/08 12:17:57 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,18 @@ void UserCommand::execute(Server &server) {
     // Save info after a clean
     std::string &username = this->_params[0];
     std::string &realname = this->_params[3];
+
+    // Control username
+    if (username.length() == 0 || std::isdigit(username[0])) {
+        server.sendNumericReplyToClient(this->_sender, IRC::ERR_ERRONEUSNICKNAME, IRC::MSG_ERRONEUSNICKNAME2, username);
+        return;
+    }
+
+    // Control realname
+    if (realname.length() == 0 || std::isdigit(realname[0])) {
+        server.sendNumericReplyToClient(this->_sender, IRC::ERR_ERRONEUSNICKNAME, IRC::MSG_ERRONEUSNICKNAME3, realname);
+        return;
+    }
 
     // Handle username len
     if (username.size() > 9)

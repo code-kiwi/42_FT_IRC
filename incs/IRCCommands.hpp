@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 08:07:44 by mhotting          #+#    #+#             */
-/*   Updated: 2025/10/06 13:31:59 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/08 15:31:15 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ const std::string CMD_PRIVMSG = "PRIVMSG";
 const std::string CMD_TOPIC = "TOPIC";
 const std::string CMD_WHO = "WHO";
 const std::string CMD_NAMES = "NAMES";
+const std::string CMD_LIST = "LIST";
 } // namespace IRC
 
 #endif

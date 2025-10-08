@@ -15,8 +15,11 @@
 #define CHANNEL_HPP
 
 #include "Client.hpp"
+#include "Server.hpp"
 
 #include <set>
+
+class Server;
 
 class Channel {
 public:
@@ -61,7 +64,8 @@ public:
     void addInvited(Client *client);
     void removeInvited(Client *client);
 
-    void kickMember(Client *client);
+    void kickMember(Server &server, Client *client, Client *sourceClient);
+    void promoteMemberIfNecessary(Server &server, Client *sourceClient);
 
 private:
     std::string _name;
