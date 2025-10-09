@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/04 01:28:14 by mhotting          #+#    #+#             */
-/*   Updated: 2025/10/06 12:58:51 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/10 00:54:04 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ void KickCommand::kickMemberFromChannel(Server &server, Channel *channel, const 
     const std::string msg = this->getName() + " " + channel->getName() + " " + targetClient->getNickname();
     server.sendMessageToClient(this->_sender, this->_sender, msg, comment);
     server.sendMessageToChannelUsers(*channel, this->_sender, msg, comment);
-    channel->kickMember(targetClient);
+    channel->kickMember(server, targetClient, this->_sender);
 }
 
 Channel *KickCommand::getAndCheckChannel(Server &server, const std::string &channelName) {

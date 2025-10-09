@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 20:26:30 by mhotting          #+#    #+#             */
-/*   Updated: 2025/10/06 13:32:32 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/08 15:32:06 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ private:
     static Command *createTopicCommand(Client *client, const std::vector<std::string> &params);
     static Command *createWhoCommand(Client *client, const std::vector<std::string> &params);
     static Command *createNamesCommand(Client *client, const std::vector<std::string> &params);
+    static Command *createListCommand(Client *client, const std::vector<std::string> &params);
 };
 
 #endif

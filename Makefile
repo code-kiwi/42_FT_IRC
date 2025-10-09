@@ -6,7 +6,7 @@
 #    By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/20 12:41:57 by mhotting          #+#    #+#              #
-#    Updated: 2025/10/06 13:34:00 by mhotting         ###   ########.fr        #
+#    Updated: 2025/10/08 17:27:12 by mhotting         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,6 +31,14 @@ endif
 # HEADERS
 HEADERS_DIRS			=	incs/ incs/commands/
 
+# SERVER
+SERVER_DIR				=	server/
+SERVER_FILES			=	ServerChannel.cpp	\
+							ServerClient.cpp	\
+							ServerGeneral.cpp	\
+							ServerMessages.cpp	\
+							ServerNetwork.cpp
+SERVER					=	$(addprefix $(SERVER_DIR), $(SERVER_FILES))
 
 # COMMANDS
 COMMANDS_DIR			=	commands/
@@ -51,16 +59,17 @@ COMMANDS_FILES			=	CommandFactory.cpp	\
 							PrivMsgCommand.cpp	\
 							TopicCommand.cpp	\
 							WhoCommand.cpp		\
-							NamesCommand.cpp
+							NamesCommand.cpp	\
+							ListCommand.cpp
 COMMANDS				=	$(addprefix $(COMMANDS_DIR), $(COMMANDS_FILES))
 
 # SOURCES GENERAL
 SRCS_MAIN_DIR			=	srcs/
-SRCS_FILES				=	$(COMMANDS)			\
+SRCS_FILES				=	$(SERVER)			\
+							$(COMMANDS)			\
 							main.cpp			\
 							helpers.cpp			\
 							Client.cpp			\
-							Server.cpp			\
 							Channel.cpp
 SRCS					=	$(addprefix $(SRCS_MAIN_DIR), $(SRCS_FILES))
 
