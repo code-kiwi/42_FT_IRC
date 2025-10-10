@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/08 17:06:06 by mhotting          #+#    #+#             */
-/*   Updated: 2025/10/08 17:37:55 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/10 02:28:24 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 #include <arpa/inet.h>
 #include <cstring>
-#include <errno.h>
 #include <fcntl.h>
 #include <iostream>
 #include <poll.h>
@@ -54,25 +53,17 @@ void Server::acceptNewClient(void) {
     // Accept new client
     int incomingFd = accept(this->_socketFd, (struct sockaddr *)&(clientAddress), &len);
     if (incomingFd == -1) {
-        if (errno == EINTR) {
 #ifdef DEBUG
-            std::cout << "[DEBUG] accept() interrupted, retrying later" << std::endl;
+        std::cerr << "[DEBUG] accept() failed, client not accepted" << std::endl;
 #endif
-            return;
-        } else if (errno == EAGAIN || errno == EWOULDBLOCK) {
-#ifdef DEBUG
-            std::cout << "[DEBUG] accept() would block, retrying later" << std::endl;
-#endif
-            return;
-        }
-        throw std::runtime_error(std::string("accept() failed: ") + strerror(errno));
+        return;
     }
 
     // Sets the socket option O_NONBLOCK for non-blocking socket
     returned = fcntl(incomingFd, F_SETFL, O_NONBLOCK);
     if (returned == -1) {
         close(incomingFd);
-        throw std::runtime_error(std::string("fcntl() failed into server::acceptClient: ") + strerror(errno));
+        throw std::runtime_error("fcntl() failed into server::acceptClient");
     }
 
     // Detects the IP address' type and converts it to a string

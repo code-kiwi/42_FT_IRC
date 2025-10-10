@@ -6,7 +6,7 @@
 /*   By: mhotting <mhotting@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/08 17:06:06 by mhotting          #+#    #+#             */
-/*   Updated: 2025/10/08 17:36:58 by mhotting         ###   ########.fr       */
+/*   Updated: 2025/10/10 02:24:03 by mhotting         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 #include <arpa/inet.h>
 #include <cstring>
-#include <errno.h>
 #include <fcntl.h>
 #include <iostream>
 #include <stdexcept>
@@ -108,7 +107,7 @@ void Server::receiveData(int fd) {
     // Getting a pointer to the client linked to fd
     Client *client = this->getClientByFd(fd);
     if (client == NULL) {
-        while (recv(fd, &buffer[0], buffer.size(), 0) > 0) {}
+        recv(fd, &buffer[0], buffer.size(), 0);
 #ifdef DEBUG
         std::cerr << "[DEBUG] Warning: received data for unknown fd " << fd << std::endl;
 #endif
@@ -116,24 +115,18 @@ void Server::receiveData(int fd) {
     }
 
     // Reading from the socket
-    ssize_t bytes;
-    do {
-        bytes = recv(fd, &buffer[0], buffer.size(), 0);
-        if (bytes > 0) {
+    ssize_t bytes = recv(fd, &buffer[0], buffer.size(), 0);
+    if (bytes > 0) {
 #ifdef DEBUG
-            std::cout << YELLOW << "[DEBUG] Client <" << client->getFd() << "> Data: " << WHITE << std::string(buffer, 0, bytes) << std::endl;
+        std::cout << YELLOW << "[DEBUG] Client <" << client->getFd() << "> Data: " << WHITE << std::string(buffer, 0, bytes) << std::endl;
 #endif
-            client->appendToInputBuffer(std::string(buffer, 0, bytes));
-        }
-    } while (bytes > 0);
-
-    // Checking socket shutdown or reading error
-    if (bytes == 0) {
+        client->appendToInputBuffer(std::string(buffer, 0, bytes));
+    } else if (bytes == 0) { // Checking socket shutdown or reading error
 #ifdef DEBUG
         std::cout << GREEN << "[DEBUG] Client <" << client->getFd() << "> Disconnected" << WHITE << std::endl;
 #endif
         this->clearClient(client->getFd());
-    } else if (bytes == -1 && !(errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR)) {
+    } else {
 #ifdef DEBUG
         std::cerr << "[DEBUG] Error: recv() failed for fd " << client->getFd();
 #endif
@@ -142,17 +135,15 @@ void Server::receiveData(int fd) {
 }
 
 void Server::sendData(Client *client) {
-    ssize_t n;
-    while (!client->getOutputBuffer().empty()) {
-        n = send(client->getFd(), client->getOutputBuffer().c_str(), client->getOutputBuffer().size(), MSG_DONTWAIT | MSG_NOSIGNAL);
-        if (n > 0) {
-            client->consumeOutput(n);
-        } else if (n == -1) {
-            if (errno == EWOULDBLOCK || errno == EAGAIN) {
-                break; // Socket is full, wait until next POLLOUT
-            } else {
-                clearClient(client->getFd()); // Unexpected error
-            }
-        }
+    const std::string &buffer = client->getOutputBuffer();
+    if (buffer.empty()) {
+        return;
+    }
+
+    ssize_t n = send(client->getFd(), buffer.c_str(), buffer.size(), MSG_DONTWAIT | MSG_NOSIGNAL);
+    if (n > 0) {
+        client->consumeOutput(n);
+    } else if (n == -1) {
+        clearClient(client->getFd());
     }
 }
